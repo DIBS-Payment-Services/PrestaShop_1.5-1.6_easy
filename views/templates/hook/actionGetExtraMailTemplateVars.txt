@@ -1,0 +1,7 @@
+{l s='Order status' mod='dibs'}: {$dibs_payment_id|escape:'htmlall':'UTF-8'}
+
+{l s='Payment ID' mod='dibs'}:{$dibs_payment_id|escape:'htmlall':'UTF-8'}
+
+{l s='Delay' mod='dibs'}: {$dibs_delay|escape:'htmlall':'UTF-8'}
+
+{l s='Contact email' mod='dibs'}: {$dibs_contact_email|escape:'htmlall':'UTF-8'}

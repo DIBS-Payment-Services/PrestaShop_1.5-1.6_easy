@@ -1,0 +1,102 @@
+services:
+    dibs.module:
+        synthetic: true
+
+    dibs.adapter.configuration:
+        class: 'Invertus\Dibs\Adapter\ConfigurationAdapter'
+
+    dibs.adapter.language:
+        class: 'Invertus\Dibs\Adapter\LanguageAdapter'
+
+    dibs.adapter.tab:
+        class: 'Invertus\Dibs\Adapter\TabAdapter'
+
+    dibs.adapter.tools:
+        class: 'Invertus\Dibs\Adapter\ToolsAdapter'
+
+    dibs.adapter.link:
+        class: 'Invertus\Dibs\Adapter\LinkAdapter'
+
+    dibs.context.db:
+        class: 'Db'
+        factory: ['Db', 'getInstance']
+
+    dibs.installer:
+        class: 'Invertus\Dibs\Install\Installer'
+        arguments:
+            - '@dibs.module'
+            - '@dibs.adapter.configuration'
+            - '@dibs.adapter.language'
+            - '@dibs.adapter.tab'
+            - '@dibs.adapter.tools'
+            - '@dibs.context.db'
+            - '%module_settings%'
+
+    dibs.service.client_factory:
+        class: 'Invertus\Dibs\Service\ClientFactory'
+        arguments:
+            - '@dibs.adapter.configuration'
+            - '%api_test_url%'
+            - '%api_prod_url%'
+
+    dibs.http_client:
+        class: 'Guzzle\Http\Client'
+        factory: 'dibs.service.client_factory:createNew'
+
+    dibs.service.api_request:
+        class: 'Invertus\Dibs\Service\ApiRequest'
+        arguments:
+            - '@dibs.http_client'
+            - '@dibs.adapter.tools'
+
+    dibs.service.payment:
+        class: 'Invertus\Dibs\Service\PaymentService'
+        arguments:
+            - '@dibs.service.api_request'
+            - '@dibs.repository.order_payment'
+            - '@dibs.adapter.tools'
+            - '@dibs.adapter.link'
+
+    dibs.repository.order_payment:
+        class: 'Invertus\Dibs\Repository\OrderPaymentRepository'
+        arguments:
+            - '@dibs.context.db'
+
+    dibs.action.payment_cancel:
+        class: 'Invertus\Dibs\Action\PaymentCancelAction'
+        arguments:
+            - '@dibs.service.payment'
+            - '@dibs.adapter.configuration'
+            - '@dibs.repository.order_payment'
+            - '@dibs.module'
+
+    dibs.action.payment_charge:
+        class: 'Invertus\Dibs\Action\PaymentChargeAction'
+        arguments:
+            - '@dibs.service.payment'
+            - '@dibs.repository.order_payment'
+            - '@dibs.adapter.configuration'
+            - '@dibs.module'
+
+    dibs.action.payment_refund:
+        class: 'Invertus\Dibs\Action\PaymentRefundAction'
+        arguments:
+            - '@dibs.service.payment'
+            - '@dibs.adapter.configuration'
+            - '@dibs.repository.order_payment'
+            - '@dibs.module'
+
+    dibs.action.payment_create:
+        class: 'Invertus\Dibs\Action\PaymentCreateAction'
+        arguments:
+            - '@dibs.service.payment'
+            - '@dibs.adapter.link'
+            - '@dibs.module'
+
+    dibs.action.payment_get:
+        class: 'Invertus\Dibs\Action\PaymentGetAction'
+        arguments:
+             - '@dibs.service.payment'
+
+    dibs.util.address_checksum:
+        class: 'Invertus\Dibs\Util\AddressChecksum'

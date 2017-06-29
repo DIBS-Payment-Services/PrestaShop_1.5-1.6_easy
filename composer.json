@@ -1,0 +1,25 @@
+{
+    "name": "invertus/dibs",
+    "type": "prestashop-module",
+    "authors": [
+        {
+            "name": "Invertus",
+            "email": "help@invertus.eu"
+        }
+    ],
+    "require": {
+        "guzzle/guzzle": "^3.9",
+        "symfony/dependency-injection": "^2.8",
+        "symfony/filesystem": "^2.8",
+        "symfony/config": "^2.8",
+        "symfony/yaml": "^2.8"
+    },
+    "autoload": {
+        "psr-4": {
+            "Invertus\\Dibs\\": "src/"
+        },
+        "classmap": [
+            "src/Entity/"
+        ]
+    }
+}

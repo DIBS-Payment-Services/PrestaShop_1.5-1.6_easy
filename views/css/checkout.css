@@ -1,0 +1,6 @@
+#order_step, div.order_delivery, #center_column .cart_navigation,
+#carrier_area .order_carrier_content > .box, #carrier_area .carrier_title,
+.order_carrier_content .condition_title, .order_carrier_content .checkbox
+{
+    display: none;
+}
