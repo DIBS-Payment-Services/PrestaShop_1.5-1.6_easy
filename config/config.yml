@@ -9,6 +9,7 @@ parameters:
     js_checkout_prod_url: 'https://checkout.dibspayment.eu/v1/checkout.js?v=1'
 
     supported_currencies: ['SEK']
+    supported_countries: ['SWE']
 
     module_settings:
         configuration:

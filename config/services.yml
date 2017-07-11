@@ -92,6 +92,7 @@ services:
             - '@dibs.service.payment'
             - '@dibs.adapter.link'
             - '@dibs.module'
+            - '%supported_countries%'
 
     dibs.action.payment_get:
         class: 'Invertus\Dibs\Action\PaymentGetAction'

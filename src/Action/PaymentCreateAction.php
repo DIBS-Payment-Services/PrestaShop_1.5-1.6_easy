@@ -47,17 +47,28 @@ class PaymentCreateAction extends AbstractAction
     private $module;
 
     /**
+     * @var array
+     */
+    private $supportedCountries;
+
+    /**
      * PaymentCreateAction constructor.
      *
      * @param PaymentService $paymentService
      * @param LinkAdapter $linkAdapter
      * @param Dibs $module
+     * @param array $supportedCountries
      */
-    public function __construct(PaymentService $paymentService, LinkAdapter $linkAdapter, Dibs $module)
-    {
+    public function __construct(
+        PaymentService $paymentService,
+        LinkAdapter $linkAdapter,
+        Dibs $module,
+        array $supportedCountries
+    ) {
         $this->paymentService = $paymentService;
         $this->linkAdapter = $linkAdapter;
         $this->module = $module;
+        $this->supportedCountries = $supportedCountries;
     }
 
     /**
@@ -76,6 +87,7 @@ class PaymentCreateAction extends AbstractAction
         $createRequest->setCurrency($currency->iso_code);
         $createRequest->setReference($cart->id);
         $createRequest->setUrl($this->linkAdapter->getModuleLink('dibs', 'checkout'));
+        $createRequest->setShippingCountries($this->supportedCountries);
 
         $items = $this->getCartProductItems($cart);
         $createRequest->setItems($items);

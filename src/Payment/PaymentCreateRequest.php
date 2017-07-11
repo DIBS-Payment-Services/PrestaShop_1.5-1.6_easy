@@ -49,6 +49,19 @@ class PaymentCreateRequest
     private $url;
 
     /**
+     * @var array
+     */
+    private $supportedCountries = array();
+
+    /**
+     * @param array $supportedCountries
+     */
+    public function setShippingCountries(array $supportedCountries)
+    {
+        $this->supportedCountries = $supportedCountries;
+    }
+
+    /**
      * @return PaymentItem[]
      */
     public function getItems()
@@ -155,6 +168,12 @@ class PaymentCreateRequest
                 'url' => $this->getUrl(),
             ),
         );
+
+        if (count($this->supportedCountries)) {
+            $orderArray['checkout']['ShippingCountries'] = array_map(function($countryCode) {
+                return ['countryCode' => $countryCode];
+           }, $this->supportedCountries);
+        }
 
         return $orderArray;
     }
