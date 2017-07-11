@@ -183,6 +183,8 @@ class DibsValidationModuleFrontController extends ModuleFrontController
 
         $this->sendConfirmationEmail($customer, $newPassword);
 
+        $this->processLogin($customer);
+
         $this->context->cart->id_customer = $customer->id;
         $this->context->cart->secure_key = $customer->secure_key;
 
@@ -256,6 +258,37 @@ class DibsValidationModuleFrontController extends ModuleFrontController
         }
 
         return $alpha2Iso;
+    }
+
+    /**
+     * Process customer login
+     *
+     * @param Customer $customer
+     */
+    protected function processLogin(Customer $customer)
+    {
+        $this->context->cookie->id_compare = isset($this->context->cookie->id_compare) ?
+            $this->context->cookie->id_compare :
+            CompareProduct::getIdCompareByIdCustomer($customer->id);
+        $this->context->cookie->id_customer = (int)($customer->id);
+        $this->context->cookie->customer_lastname = $customer->lastname;
+        $this->context->cookie->customer_firstname = $customer->firstname;
+        $this->context->cookie->logged = 1;
+        $customer->logged = 1;
+        $this->context->cookie->is_guest = $customer->isGuest();
+        $this->context->cookie->passwd = $customer->passwd;
+        $this->context->cookie->email = $customer->email;
+
+        // Add customer to the context
+        $this->context->customer = $customer;
+
+        $this->context->cookie->write();
+
+        Hook::exec('actionAuthentication', array('customer' => $this->context->customer));
+
+        // Login information have changed, so we check if the cart rules still apply
+        CartRule::autoRemoveFromCart($this->context);
+        CartRule::autoAddToCart($this->context);
     }
 
     /**
