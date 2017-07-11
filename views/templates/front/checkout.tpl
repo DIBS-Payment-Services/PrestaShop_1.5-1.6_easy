@@ -22,7 +22,7 @@
 {if isset($dibsError)}
 <div class="row">
     <div class="col-md-12">
-        <div class="alert alert-danger">
+        <div class="alert alert-danger error">
             <p>{$dibsError|escape:'htmlall':'UTF-8'}</p>
         </div>
     </div>
