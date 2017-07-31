@@ -88,12 +88,7 @@ class DibsValidationModuleFrontController extends ModuleFrontController
         // First assign customer to cart if it does not exist
         if (!$this->processSaveCartCustomer($payment)) {
             $this->cancelCartPayment();
-            $errorMessage = $this->module->l(
-                'Payment was canceled, because customer with email %s was found, please sign in.',
-                self::FILENAME
-            );
-            $message = sprintf($errorMessage, $payment->getConsumer()->getPrivatePerson()->getEmail());
-            $this->addFlash('error', $message);
+            $this->addFlash('error', implode('. ', $this->errors));
             Tools::redirect($this->context->link->getModuleLink($this->module->name, 'checkout'));
         }
 
@@ -163,6 +158,11 @@ class DibsValidationModuleFrontController extends ModuleFrontController
 
         $idCustomer = Customer::customerExists($person->getEmail(), true, false);
         if ($idCustomer) {
+            $errorMessage = $this->module->l(
+                'Payment was canceled, because customer with email %s was found, please sign in.',
+                self::FILENAME
+            );
+            $this->errors[] = sprintf($errorMessage, $payment->getConsumer()->getPrivatePerson()->getEmail());
             return false;
         }
 
@@ -179,6 +179,12 @@ class DibsValidationModuleFrontController extends ModuleFrontController
         $customer->optin = 0;
         $customer->active = 1;
         $customer->id_gender = 9;
+        
+        if ($errors = $customer->validateController()) {
+            $this->errors = array_merge($this->errors, $errors);
+            return false;
+        }
+        
         $customer->save();
 
         $this->sendConfirmationEmail($customer, $newPassword);
@@ -188,7 +194,16 @@ class DibsValidationModuleFrontController extends ModuleFrontController
         $this->context->cart->id_customer = $customer->id;
         $this->context->cart->secure_key = $customer->secure_key;
 
-        return $this->context->cart->save();
+        if (!$this->context->cart->save()) {
+            $this->errors[] = $this->module->l(
+                'Payment was canceled, because customer account could not be saved.',
+                self::FILENAME
+            );
+            
+            return false;
+        }
+        
+        return true;
     }
 
     /**
