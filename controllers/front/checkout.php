@@ -106,13 +106,13 @@ class DibsCheckoutModuleFrontController extends ModuleFrontController
 
         $language = Configuration::get('DIBS_LANGUAGE');
 
-        $changeDeliveryOptionUrl = $this->context->link->getModuleLink($this->module->name, 'checkout');
+        $checkoutUrl = $this->context->link->getModuleLink($this->module->name, 'checkout');
         $validationUrl = $this->context->link->getModuleLink($this->module->name, 'validation');
 
         $this->jsVariables['dibsCheckout']['checkoutKey'] = $checkoutKey;
         $this->jsVariables['dibsCheckout']['language'] = $language;
         $this->jsVariables['dibsCheckout']['validationUrl'] = $validationUrl;
-        $this->jsVariables['dibsCheckout']['checkoutUrl'] = $changeDeliveryOptionUrl;
+        $this->jsVariables['dibsCheckout']['checkoutUrl'] = $checkoutUrl;
         $this->jsVariables['dibsCheckout']['actions']['changeDeliveryOption'] = self::CHANGE_DELIVERY_OPTION_ACTION;
         $this->jsVariables['dibsCheckout']['actions']['addDiscount'] = self::ADD_DISCOUNT_ACTION;
 
@@ -146,6 +146,25 @@ class DibsCheckoutModuleFrontController extends ModuleFrontController
             case self::ADD_DISCOUNT_ACTION:
                 $this->processAddDiscount();
                 break;
+        }
+
+        if (Tools::isSubmit('pid')) {
+            $paymentId = Tools::getValue('pid');
+
+            /** @var \Invertus\Dibs\Action\PaymentGetAction $paymentGetAction */
+            $paymentGetAction = $this->module->get('dibs.action.payment_get');
+            $payment = $paymentGetAction->getPayment($paymentId);
+
+            $paymentAmountInCents = $payment->getOrderDetail()->getAmount();
+            $cartAmountInCents = (int) (string) ($this->context->cart->getOrderTotal() * 100);
+
+            $paymentCurrency = $payment->getOrderDetail()->getCurrency();
+            $cartCurrency = new Currency($this->context->cart->id_currency);
+
+            if ($paymentAmountInCents == $cartAmountInCents && $cartCurrency->sign == $paymentCurrency) {
+                $this->jsVariables['dibsCheckout']['paymentID'] = $paymentId;
+                return;
+            }
         }
 
         /** @var \Invertus\Dibs\Action\PaymentCreateAction $paymentCreateAction */
