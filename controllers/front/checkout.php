@@ -170,6 +170,11 @@ class DibsCheckoutModuleFrontController extends ModuleFrontController
         if (isset($this->context->cookie->dibs_payment_id)) {
             $paymentId = $this->context->cookie->dibs_payment_id;
             unset($this->context->cookie->dibs_payment_id);
+
+            $orderPayment = new DibsOrderPayment();
+            $orderPayment->id_payment = $paymentId;
+            $orderPayment->id_cart = $this->context->cart->id;
+            $orderPayment->save();
         } else {
             /** @var \Invertus\Dibs\Action\PaymentCreateAction $paymentCreateAction */
             $paymentCreateAction = $this->module->get('dibs.action.payment_create');
