@@ -148,8 +148,8 @@ class DibsCheckoutModuleFrontController extends ModuleFrontController
                 break;
         }
 
-        if (Tools::isSubmit('pid')) {
-            $paymentId = Tools::getValue('pid');
+        if (Tools::isSubmit('paymentId')) {
+            $paymentId = Tools::getValue('paymentId');
 
             /** @var \Invertus\Dibs\Action\PaymentGetAction $paymentGetAction */
             $paymentGetAction = $this->module->get('dibs.action.payment_get');
@@ -161,17 +161,24 @@ class DibsCheckoutModuleFrontController extends ModuleFrontController
             $paymentCurrency = $payment->getOrderDetail()->getCurrency();
             $cartCurrency = new Currency($this->context->cart->id_currency);
 
-            if ($paymentAmountInCents == $cartAmountInCents && $cartCurrency->sign == $paymentCurrency) {
-                $this->jsVariables['dibsCheckout']['paymentID'] = $paymentId;
-                return;
+            if ($paymentAmountInCents == $cartAmountInCents && $cartCurrency->iso_code == $paymentCurrency) {
+                $this->context->cookie->dibs_payment_id = $paymentId;
+                Tools::redirect($this->context->link->getModuleLink($this->module->name, 'checkout'));
             }
         }
 
-        /** @var \Invertus\Dibs\Action\PaymentCreateAction $paymentCreateAction */
-        $paymentCreateAction = $this->module->get('dibs.action.payment_create');
-        $orderPayment = $paymentCreateAction->createPayment($this->context->cart);
+        if (isset($this->context->cookie->dibs_payment_id)) {
+            $paymentId = $this->context->cookie->dibs_payment_id;
+            unset($this->context->cookie->dibs_payment_id);
+        } else {
+            /** @var \Invertus\Dibs\Action\PaymentCreateAction $paymentCreateAction */
+            $paymentCreateAction = $this->module->get('dibs.action.payment_create');
+            $orderPayment = $paymentCreateAction->createPayment($this->context->cart);
 
-        $this->jsVariables['dibsCheckout']['paymentID'] = $orderPayment->id_payment;
+            $paymentId = $orderPayment->id_payment;
+        }
+
+        $this->jsVariables['dibsCheckout']['paymentID'] = $paymentId;
     }
 
     /**
