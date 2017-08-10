@@ -16,6 +16,8 @@
 
 namespace Invertus\Dibs\Action;
 
+use Address;
+use Carrier;
 use Cart;
 use Invertus\Dibs\Payment\PaymentItem;
 use Order;
@@ -109,6 +111,8 @@ abstract class AbstractAction
         $shippingPriceTaxIncl = $cart->getOrderTotal(true, Cart::ONLY_SHIPPING);
 
         if (0.0 != $shippingPriceTaxIncl) {
+            $carrier = new Carrier($cart->id_carrier);
+            $carrierTaxRate = $carrier->getTaxesRate(new Address($cart->id_address_delivery));
             $shippingPriceTaxExcl = $cart->getOrderTotal(false, Cart::ONLY_SHIPPING);
 
             $item = new PaymentItem();
@@ -116,8 +120,8 @@ abstract class AbstractAction
             $item->setName($this->getModule()->l('Shipping', 'AbstractRequest'));
             $item->setQuantity(1);
             $item->setUnitPrice($shippingPriceTaxExcl);
-            $item->setTaxRate(0);
-            $item->setTaxAmount($shippingPriceTaxIncl - $shippingPriceTaxIncl);
+            $item->setTaxRate($carrierTaxRate);
+            $item->setTaxAmount($shippingPriceTaxIncl - $shippingPriceTaxExcl);
             $item->setGrossTotalAmount($shippingPriceTaxIncl);
             $item->setNetTotalAmount($shippingPriceTaxExcl);
 
