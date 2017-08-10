@@ -46,12 +46,8 @@ abstract class AbstractAction
         $products = $cart->getProducts();
         $items = array();
 
-        /** @var \OrderDetail $orderDetail */
         foreach ($products as $product) {
-            $unitPrice = isset($product['price_with_reduction']) ? $product['price_with_reduction'] : 0;
-            $taxAmount =
-                isset($product['price_with_reduction']) && isset($product['price_with_reduction_without_tax']) ?
-                    $product['price_with_reduction'] - $product['price_with_reduction_without_tax'] : 0;
+            $taxAmountTotal = $product['total_wt'] - $product['total'];
 
             $attributes = isset($product['attributes']) ? $product['attributes'] : '';
 
@@ -59,9 +55,9 @@ abstract class AbstractAction
             $item->setReference($product['reference'] ?: $product['id_product']);
             $item->setName(sprintf('%s, %s', $product['name'], $attributes));
             $item->setQuantity($product['cart_quantity']);
-            $item->setUnitPrice($unitPrice);
+            $item->setUnitPrice($product['price']);
             $item->setTaxRate($product['rate']);
-            $item->setTaxAmount($taxAmount);
+            $item->setTaxAmount($taxAmountTotal);
             $item->setGrossTotalAmount($product['total_wt']);
             $item->setNetTotalAmount($product['total']);
 
@@ -207,13 +203,15 @@ abstract class AbstractAction
 
         /** @var \OrderDetail $orderDetail */
         foreach ($orderDetails as $orderDetail) {
+            $totalTax = $orderDetail->total_price_tax_incl - $orderDetail->total_price_tax_excl;
+
             $item = new PaymentItem();
             $item->setReference($orderDetail->product_reference ?: sprintf('id_product-%d', $orderDetail->product_id));
             $item->setName($orderDetail->product_name);
             $item->setQuantity($orderDetail->product_quantity);
             $item->setUnitPrice($orderDetail->unit_price_tax_excl);
             $item->setTaxRate($orderDetail->tax_rate);
-            $item->setTaxAmount($orderDetail->unit_price_tax_incl - $orderDetail->unit_price_tax_excl);
+            $item->setTaxAmount($totalTax);
             $item->setGrossTotalAmount($orderDetail->total_price_tax_incl);
             $item->setNetTotalAmount($orderDetail->total_price_tax_excl);
 
