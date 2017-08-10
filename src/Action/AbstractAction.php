@@ -89,7 +89,7 @@ abstract class AbstractAction
             $item->setQuantity(1);
             $item->setUnitPrice(-$discountTaxExcl);
             $item->setTaxRate(0);
-            $item->setTaxAmount(0);
+            $item->setTaxAmount(-($discountTaxIncl - $discountTaxExcl));
             $item->setGrossTotalAmount(-$discountTaxIncl);
             $item->setNetTotalAmount(-$discountTaxExcl);
 
