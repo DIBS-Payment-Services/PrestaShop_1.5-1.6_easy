@@ -17,6 +17,9 @@ services:
     dibs.adapter.link:
         class: 'Invertus\Dibs\Adapter\LinkAdapter'
 
+    dibs.adapter.price_round:
+        class: 'Invertus\Dibs\Adapter\PriceRoundAdapter'
+
     dibs.context.db:
         class: 'Db'
         factory: ['Db', 'getInstance']

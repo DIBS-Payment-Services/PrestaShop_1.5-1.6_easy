@@ -19,6 +19,7 @@ namespace Invertus\Dibs\Action;
 use Address;
 use Carrier;
 use Cart;
+use Invertus\Dibs\Adapter\PriceRoundAdapter;
 use Invertus\Dibs\Payment\PaymentItem;
 use Order;
 
@@ -45,11 +46,16 @@ abstract class AbstractAction
      */
     protected function getCartProductItems(Cart $cart)
     {
+        $idCurrency = $cart->id_currency;
+        $priceRounder = new PriceRoundAdapter();
         $products = $cart->getProducts();
         $items = array();
 
         foreach ($products as $product) {
-            $taxAmountTotal = $product['total_wt'] - $product['total'];
+            $unitPriceTaxExcl = $priceRounder->roundPrice($product['price'], $idCurrency);
+            $totalPriceTaxExcl = $priceRounder->roundPrice($product['total'], $idCurrency);
+            $totalPriceTaxIncl = $priceRounder->roundPrice($product['total_wt'], $idCurrency);
+            $totalTax = $priceRounder->roundPrice($product['total_wt'] - $product['total'], $idCurrency);
 
             $attributes = isset($product['attributes']) ? $product['attributes'] : '';
 
@@ -57,11 +63,11 @@ abstract class AbstractAction
             $item->setReference($product['reference'] ?: $product['id_product']);
             $item->setName(sprintf('%s, %s', $product['name'], $attributes));
             $item->setQuantity($product['cart_quantity']);
-            $item->setUnitPrice($product['price']);
+            $item->setUnitPrice($unitPriceTaxExcl);
             $item->setTaxRate($product['rate']);
-            $item->setTaxAmount($taxAmountTotal);
-            $item->setGrossTotalAmount($product['total_wt']);
-            $item->setNetTotalAmount($product['total']);
+            $item->setTaxAmount($totalTax);
+            $item->setGrossTotalAmount($totalPriceTaxIncl);
+            $item->setNetTotalAmount($totalPriceTaxExcl);
 
             $items[] = $item;
         }
@@ -78,10 +84,13 @@ abstract class AbstractAction
      */
     protected function getCartDiscountsItem(Cart $cart)
     {
+        $idCurrency = $cart->id_currency;
+        $priceRounder = new PriceRoundAdapter();
         $discountTaxIncl = $cart->getOrderTotal(true, Cart::ONLY_DISCOUNTS);
 
         if (0.0 != $discountTaxIncl) {
             $discountTaxExcl = $cart->getOrderTotal(false, Cart::ONLY_DISCOUNTS);
+            $totalTax = $priceRounder->roundPrice($discountTaxIncl - $discountTaxExcl, $idCurrency);
 
             $item = new PaymentItem();
             $item->setReference('discount');
@@ -89,7 +98,7 @@ abstract class AbstractAction
             $item->setQuantity(1);
             $item->setUnitPrice(-$discountTaxExcl);
             $item->setTaxRate(0);
-            $item->setTaxAmount(-($discountTaxIncl - $discountTaxExcl));
+            $item->setTaxAmount(-$totalTax);
             $item->setGrossTotalAmount(-$discountTaxIncl);
             $item->setNetTotalAmount(-$discountTaxExcl);
 
@@ -108,12 +117,15 @@ abstract class AbstractAction
      */
     protected function getCartShippingItem(Cart $cart)
     {
+        $priceRounder = new PriceRoundAdapter();
+        $idCurrency = $cart->id_currency;
         $shippingPriceTaxIncl = $cart->getOrderTotal(true, Cart::ONLY_SHIPPING);
 
         if (0.0 != $shippingPriceTaxIncl) {
             $carrier = new Carrier($cart->id_carrier);
             $carrierTaxRate = $carrier->getTaxesRate(new Address($cart->id_address_delivery));
             $shippingPriceTaxExcl = $cart->getOrderTotal(false, Cart::ONLY_SHIPPING);
+            $totalTax = $priceRounder->roundPrice($shippingPriceTaxIncl - $shippingPriceTaxExcl, $idCurrency);
 
             $item = new PaymentItem();
             $item->setReference('shipping');
@@ -121,7 +133,7 @@ abstract class AbstractAction
             $item->setQuantity(1);
             $item->setUnitPrice($shippingPriceTaxExcl);
             $item->setTaxRate($carrierTaxRate);
-            $item->setTaxAmount($shippingPriceTaxIncl - $shippingPriceTaxExcl);
+            $item->setTaxAmount($totalTax);
             $item->setGrossTotalAmount($shippingPriceTaxIncl);
             $item->setNetTotalAmount($shippingPriceTaxExcl);
 
@@ -140,10 +152,13 @@ abstract class AbstractAction
      */
     protected function getCartWrappingItem(Cart $cart)
     {
+        $priceRounder = new PriceRoundAdapter();
+        $idCurrency = $cart->id_currency;
         $wrappingTaxIncl = $cart->getOrderTotal(true, Cart::ONLY_WRAPPING);
 
         if (0.0 != $wrappingTaxIncl) {
             $wrappingTaxExcl = $cart->getOrderTotal(false, Cart::ONLY_WRAPPING);
+            $totalTax = $priceRounder->roundPrice($wrappingTaxIncl - $wrappingTaxExcl, $idCurrency);
 
             $item = new PaymentItem();
             $item->setReference('wrapping');
@@ -151,7 +166,7 @@ abstract class AbstractAction
             $item->setQuantity(1);
             $item->setUnitPrice($wrappingTaxExcl);
             $item->setTaxRate(0);
-            $item->setTaxAmount($wrappingTaxIncl - $wrappingTaxExcl);
+            $item->setTaxAmount($totalTax);
             $item->setGrossTotalAmount($wrappingTaxIncl);
             $item->setNetTotalAmount($wrappingTaxExcl);
 
@@ -199,6 +214,9 @@ abstract class AbstractAction
      */
     protected function getOrderProductItems(Order $order)
     {
+        $priceRounder = new PriceRoundAdapter();
+        $idCurrency = $order->id_currency;
+
         $orderDetails = new \Collection('OrderDetail');
         $orderDetails->where('id_order', '=', $order->id);
         $orderDetails = $orderDetails->getResults();
@@ -207,17 +225,20 @@ abstract class AbstractAction
 
         /** @var \OrderDetail $orderDetail */
         foreach ($orderDetails as $orderDetail) {
-            $totalTax = $orderDetail->total_price_tax_incl - $orderDetail->total_price_tax_excl;
+            $unitPriceTaxExcl = $priceRounder->roundPrice($orderDetail->unit_price_tax_excl, $idCurrency);
+            $totalPriceTaxIncl = $priceRounder->roundPrice($orderDetail->total_price_tax_incl, $idCurrency);
+            $totalPriceTaxExcl = $priceRounder->roundPrice($orderDetail->total_price_tax_excl, $idCurrency);
+            $totalTax = $priceRounder->roundPrice($totalPriceTaxIncl - $totalPriceTaxExcl, $idCurrency);
 
             $item = new PaymentItem();
             $item->setReference($orderDetail->product_reference ?: sprintf('id_product-%d', $orderDetail->product_id));
             $item->setName($orderDetail->product_name);
             $item->setQuantity($orderDetail->product_quantity);
-            $item->setUnitPrice($orderDetail->unit_price_tax_excl);
+            $item->setUnitPrice($unitPriceTaxExcl);
             $item->setTaxRate($orderDetail->tax_rate);
             $item->setTaxAmount($totalTax);
-            $item->setGrossTotalAmount($orderDetail->total_price_tax_incl);
-            $item->setNetTotalAmount($orderDetail->total_price_tax_excl);
+            $item->setGrossTotalAmount($totalPriceTaxIncl);
+            $item->setNetTotalAmount($totalPriceTaxExcl);
 
             $items[] = $item;
         }
@@ -234,16 +255,23 @@ abstract class AbstractAction
      */
     protected function getOrderDiscountsItem(Order $order)
     {
+        $priceRounder = new PriceRoundAdapter();
+        $idCurrency = $order->id_currency;
+
         if (0.0 != (float) $order->total_discounts) {
+            $totalDiscountTaxExcl = $priceRounder->roundPrice($order->total_discounts_tax_excl, $idCurrency);
+            $totalDiscountTaxIncl = $priceRounder->roundPrice($order->total_discounts_tax_incl, $idCurrency);
+            $totalTax = $priceRounder->roundPrice($totalDiscountTaxIncl - $totalDiscountTaxExcl, $idCurrency);
+
             $item = new PaymentItem();
             $item->setReference('discount');
             $item->setName($this->getModule()->l('Discount', 'AbstractRequest'));
             $item->setQuantity(1);
-            $item->setUnitPrice(-$order->total_discounts_tax_excl);
+            $item->setUnitPrice(-$totalDiscountTaxExcl);
             $item->setTaxRate(0);
-            $item->setTaxAmount(0);
-            $item->setGrossTotalAmount(-$order->total_discounts_tax_incl);
-            $item->setNetTotalAmount(-$order->total_discounts_tax_excl);
+            $item->setTaxAmount(-$totalTax);
+            $item->setGrossTotalAmount(-$totalDiscountTaxIncl);
+            $item->setNetTotalAmount(-$totalDiscountTaxExcl);
 
             return $item;
         }
@@ -260,16 +288,23 @@ abstract class AbstractAction
      */
     protected function getOrderShippingItem(Order $order)
     {
+        $priceRounder = new PriceRoundAdapter();
+        $idCurrency = $order->id_currency;
+
         if (0.0 != (float) $order->total_shipping) {
+            $totalShippingTaxExcl = $priceRounder->roundPrice($order->total_shipping_tax_excl, $idCurrency);
+            $totalShippingTaxIncl = $priceRounder->roundPrice($order->total_shipping_tax_incl, $idCurrency);
+            $taxAmount = $priceRounder->roundPrice($totalShippingTaxIncl - $totalShippingTaxExcl, $idCurrency);
+
             $item = new PaymentItem();
             $item->setReference('shipping');
             $item->setName($this->getModule()->l('Shipping', 'AbstractRequest'));
             $item->setQuantity(1);
-            $item->setUnitPrice($order->total_shipping_tax_excl);
+            $item->setUnitPrice($totalShippingTaxExcl);
             $item->setTaxRate($order->carrier_tax_rate);
-            $item->setTaxAmount($order->total_shipping_tax_incl - $order->total_shipping_tax_excl);
-            $item->setGrossTotalAmount($order->total_shipping_tax_incl);
-            $item->setNetTotalAmount($order->total_shipping_tax_excl);
+            $item->setTaxAmount($taxAmount);
+            $item->setGrossTotalAmount($totalShippingTaxIncl);
+            $item->setNetTotalAmount($totalShippingTaxExcl);
 
             return $item;
         }
@@ -286,16 +321,23 @@ abstract class AbstractAction
      */
     protected function getOrderWrappingItem(Order $order)
     {
+        $priceRounder = new PriceRoundAdapter();
+        $idCurrency = $order->id_currency;
+
         if (0.0 != (float) $order->total_wrapping) {
+            $totalTaxExcl = $priceRounder->roundPrice($order->total_wrapping_tax_excl, $idCurrency);
+            $totalTaxIncl = $priceRounder->roundPrice($order->total_wrapping_tax_incl, $idCurrency);
+            $taxAmount = $priceRounder->roundPrice($totalTaxIncl - $totalTaxExcl, $idCurrency);
+
             $item = new PaymentItem();
             $item->setReference('wrapping');
             $item->setName($this->getModule()->l('Wrapping', 'AbstractRequest'));
             $item->setQuantity(1);
-            $item->setUnitPrice($order->total_wrapping_tax_excl);
+            $item->setUnitPrice($totalTaxExcl);
             $item->setTaxRate(0);
-            $item->setTaxAmount($order->total_wrapping_tax_incl - $order->total_wrapping_tax_excl);
-            $item->setGrossTotalAmount($order->total_wrapping_tax_incl);
-            $item->setNetTotalAmount($order->total_wrapping_tax_excl);
+            $item->setTaxAmount($taxAmount);
+            $item->setGrossTotalAmount($totalTaxIncl);
+            $item->setNetTotalAmount($totalTaxExcl);
 
             return $item;
         }
