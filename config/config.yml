@@ -25,6 +25,7 @@ parameters:
             DIBS_TEST_CHECKOUT_KEY: ''
             DIBS_LANGUAGE: 'en-GB'
             DIBS_TEST_MODE: 1
+            DIBS_SWEEDEN_ADDRESS_ID: ~
 
         order_states:
             - { name: 'Payment accepted in DIBS Easy', color: '#0094cf', paid: 1, invoice: 1, config: 'DIBS_ACCEPTED_ORDER_STATE_ID'}

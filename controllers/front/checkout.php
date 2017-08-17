@@ -130,6 +130,11 @@ class DibsCheckoutModuleFrontController extends ModuleFrontController
         CartRule::autoRemoveFromCart($this->context);
         CartRule::autoAddToCart($this->context);
 
+        if (!$this->context->cart->id_address_delivery) {
+            $this->context->cart->id_address_delivery = Configuration::get('DIBS_SWEEDEN_ADDRESS_ID');
+            $this->context->cart->save();
+        }
+
         /** @var \Invertus\Dibs\Repository\OrderPaymentRepository $orderPaymentRepository */
         $orderPaymentRepository = $this->module->get('dibs.repository.order_payment');
         $orderPayment = $orderPaymentRepository->findOrderPaymentByCartId($this->context->cart->id);
