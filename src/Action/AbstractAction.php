@@ -91,13 +91,14 @@ abstract class AbstractAction
         if (0.0 != $discountTaxIncl) {
             $discountTaxExcl = $cart->getOrderTotal(false, Cart::ONLY_DISCOUNTS);
             $totalTax = $priceRounder->roundPrice($discountTaxIncl - $discountTaxExcl, $idCurrency);
+            $averageTaxRate = $cart->getAverageProductsTaxRate() * 100;
 
             $item = new PaymentItem();
             $item->setReference('discount');
             $item->setName($this->getModule()->l('Discount', 'AbstractRequest'));
             $item->setQuantity(1);
             $item->setUnitPrice(-$discountTaxExcl);
-            $item->setTaxRate(0);
+            $item->setTaxRate($averageTaxRate);
             $item->setTaxAmount(-$totalTax);
             $item->setGrossTotalAmount(-$discountTaxIncl);
             $item->setNetTotalAmount(-$discountTaxExcl);
