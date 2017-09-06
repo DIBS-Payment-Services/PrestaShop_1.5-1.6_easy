@@ -21,6 +21,7 @@ use Carrier;
 use Cart;
 use Invertus\Dibs\Adapter\PriceRoundAdapter;
 use Invertus\Dibs\Payment\PaymentItem;
+use Invertus\Dibs\Util\NameNormalizer;
 use Order;
 
 /**
@@ -48,6 +49,7 @@ abstract class AbstractAction
     {
         $idCurrency = $cart->id_currency;
         $priceRounder = new PriceRoundAdapter();
+        $nameNormalizer = new NameNormalizer();
         $products = $cart->getProducts();
         $items = array();
 
@@ -59,9 +61,12 @@ abstract class AbstractAction
 
             $attributes = isset($product['attributes']) ? $product['attributes'] : '';
 
+            $productName = sprintf('%s %s', $product['name'], $attributes);
+            $productName = $nameNormalizer->normalize($productName);
+
             $item = new PaymentItem();
             $item->setReference($product['reference'] ?: $product['id_product']);
-            $item->setName(sprintf('%s, %s', $product['name'], $attributes));
+            $item->setName($productName);
             $item->setQuantity($product['cart_quantity']);
             $item->setUnitPrice($unitPriceTaxExcl);
             $item->setTaxRate($product['rate']);
@@ -216,6 +221,7 @@ abstract class AbstractAction
     protected function getOrderProductItems(Order $order)
     {
         $priceRounder = new PriceRoundAdapter();
+        $nameNormalizer = new NameNormalizer();
         $idCurrency = $order->id_currency;
 
         $orderDetails = new \Collection('OrderDetail');
@@ -231,9 +237,11 @@ abstract class AbstractAction
             $totalPriceTaxExcl = $priceRounder->roundPrice($orderDetail->total_price_tax_excl, $idCurrency);
             $totalTax = $priceRounder->roundPrice($totalPriceTaxIncl - $totalPriceTaxExcl, $idCurrency);
 
+            $productName = $nameNormalizer->normalize($orderDetail->product_name);
+
             $item = new PaymentItem();
             $item->setReference($orderDetail->product_reference ?: sprintf('id_product-%d', $orderDetail->product_id));
-            $item->setName($orderDetail->product_name);
+            $item->setName($productName);
             $item->setQuantity($orderDetail->product_quantity);
             $item->setUnitPrice($unitPriceTaxExcl);
             $item->setTaxRate($orderDetail->tax_rate);

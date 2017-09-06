@@ -23,6 +23,7 @@ use Invertus\Dibs\Payment\PaymentItem;
 use Invertus\Dibs\Payment\PaymentRefundRequest;
 use Invertus\Dibs\Repository\OrderPaymentRepository;
 use Invertus\Dibs\Service\PaymentService;
+use Invertus\Dibs\Util\NameNormalizer;
 use Order;
 
 /**
@@ -136,6 +137,8 @@ class PaymentRefundAction extends AbstractAction
             return false;
         }
 
+        $nameNormalizer = new NameNormalizer();
+
         $refundRequest = new PaymentRefundRequest();
         $refundRequest->setChargeId($orderPayment->id_charge);
 
@@ -147,8 +150,10 @@ class PaymentRefundAction extends AbstractAction
 
         /** @var \OrderDetail $orderDetail */
         foreach ($orderDetails as $orderDetail) {
+            $productName = $nameNormalizer->normalize($orderDetail->product_name);
+
             $item = new PaymentItem();
-            $item->setName($orderDetail->product_name);
+            $item->setName($productName);
             $item->setReference($orderDetail->product_reference);
             $item->setQuantity($refundDetails[$orderDetail->id]['quantity']);
             $item->setUnitPrice($refundDetails[$orderDetail->id]['unit_price']);
