@@ -2,6 +2,10 @@
 
 {l s='Payment ID' mod='dibs'}:{$dibs_payment_id|escape:'htmlall':'UTF-8'}
 
+{l s='Payment type' mod='dibs'}:{$dibs_payment_type|escape:'htmlall':'UTF-8'}
+
+{l s='Credit card number' mod='dibs'}:{$dibs_masked_pan|escape:'htmlall':'UTF-8'}
+
 {l s='Delay' mod='dibs'}: {$dibs_delay|escape:'htmlall':'UTF-8'}
 
 {l s='Contact email' mod='dibs'}: {$dibs_contact_email|escape:'htmlall':'UTF-8'}

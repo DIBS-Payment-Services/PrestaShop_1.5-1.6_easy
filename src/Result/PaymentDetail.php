@@ -29,6 +29,16 @@ class PaymentDetail
     private $paymentMethod;
 
     /**
+     * @var InvoiceDetails
+     */
+    private $invoiceDetails;
+
+    /**
+     * @var CardDetails
+     */
+    private $cardDetails;
+
+    /**
      * @return string
      */
     public function getPaymentMethod()
@@ -49,7 +59,7 @@ class PaymentDetail
      */
     public function getPaymentType()
     {
-        return $this->paymentType;
+        return (string) $this->paymentType;
     }
 
     /**
@@ -58,5 +68,37 @@ class PaymentDetail
     public function setPaymentType($paymentType)
     {
         $this->paymentType = $paymentType;
+    }
+
+    /**
+     * @return InvoiceDetails
+     */
+    public function getInvoiceDetails()
+    {
+        return $this->invoiceDetails;
+    }
+
+    /**
+     * @param InvoiceDetails $invoiceDetails
+     */
+    public function setInvoiceDetails(InvoiceDetails $invoiceDetails)
+    {
+        $this->invoiceDetails = $invoiceDetails;
+    }
+
+    /**
+     * @return CardDetails
+     */
+    public function getCardDetails()
+    {
+        return $this->cardDetails;
+    }
+
+    /**
+     * @param CardDetails $cardDetails
+     */
+    public function setCardDetails(CardDetails $cardDetails)
+    {
+        $this->cardDetails = $cardDetails;
     }
 }

@@ -27,7 +27,9 @@ use Invertus\Dibs\Payment\PaymentGetRequest;
 use Invertus\Dibs\Payment\PaymentRefundRequest;
 use Invertus\Dibs\Repository\OrderPaymentRepository;
 use Invertus\Dibs\Result\Address;
+use Invertus\Dibs\Result\CardDetails;
 use Invertus\Dibs\Result\Consumer;
+use Invertus\Dibs\Result\InvoiceDetails;
 use Invertus\Dibs\Result\OrderDetail;
 use Invertus\Dibs\Result\Payment;
 use Invertus\Dibs\Result\PaymentDetail;
@@ -301,6 +303,40 @@ class PaymentService
                 null
         );
 
+        $invoiceDetails = new InvoiceDetails();
+        $invoiceDetails->setInvoiceNumber(
+            isset($paymentArray['paymentDetails']['invoiceDetails']['invoiceNumber']) ?
+            $paymentArray['paymentDetails']['invoiceDetails']['invoiceNumber'] :
+            null
+        );
+        $invoiceDetails->setInvoiceNumber(
+            isset($paymentArray['paymentDetails']['invoiceDetails']['ocr']) ?
+            $paymentArray['paymentDetails']['invoiceDetails']['ocr'] :
+            null
+        );
+        $invoiceDetails->setInvoiceNumber(
+            isset($paymentArray['paymentDetails']['invoiceDetails']['pdfLink']) ?
+            $paymentArray['paymentDetails']['invoiceDetails']['pdfLink'] :
+            null
+        );
+        $invoiceDetails->setInvoiceNumber(
+            isset($paymentArray['paymentDetails']['invoiceDetails']['dueDate']) ?
+            $paymentArray['paymentDetails']['invoiceDetails']['dueDate'] :
+            null
+        );
+
+        $cardDetails = new CardDetails();
+        $cardDetails->setMaskedPan(
+            isset($paymentArray['paymentDetails']['cardDetails']['maskedPan']) ?
+                $paymentArray['paymentDetails']['cardDetails']['maskedPan'] :
+                null
+        );
+        $cardDetails->setMaskedPan(
+            isset($paymentArray['paymentDetails']['cardDetails']['expiryDate']) ?
+                $paymentArray['paymentDetails']['cardDetails']['expiryDate'] :
+                null
+        );
+
         $paymentDetail = new PaymentDetail();
         $paymentDetail->setPaymentType(
             isset($paymentArray['paymentDetails']['paymentType']) ?
@@ -312,6 +348,8 @@ class PaymentService
                 $paymentArray['paymentDetails']['paymentMethod'] :
                 null
         );
+        $paymentDetail->setInvoiceDetails($invoiceDetails);
+        $paymentDetail->setCardDetails($cardDetails);
 
         $consumer = new Consumer();
         $consumer->setBillingAddress($billingAddress);
