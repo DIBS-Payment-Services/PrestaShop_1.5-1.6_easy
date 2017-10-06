@@ -135,6 +135,12 @@ class DibsCheckoutModuleFrontController extends ModuleFrontController
             $this->context->cart->save();
         }
 
+        if (!$this->context->cart->id_carrier) {
+            $idCarrierDefault = (int) Configuration::get('PS_CARRIER_DEFAULT');
+            $this->context->cart->id_carrier = $idCarrierDefault;
+            $this->context->cart->save();
+        }
+
         /** @var \Invertus\Dibs\Repository\OrderPaymentRepository $orderPaymentRepository */
         $orderPaymentRepository = $this->module->get('dibs.repository.order_payment');
         $orderPayment = $orderPaymentRepository->findOrderPaymentByCartId($this->context->cart->id);
