@@ -114,11 +114,19 @@ class AdminDibsConfigurationController extends ModuleAdminController
         return array(
             array(
                 'id' => 'en-GB',
-                'name' => $this->l('English')
+                'name' => $this->l('English'),
             ),
             array(
                 'id' => 'sv-SE',
-                'name' => $this->l('Swedish')
+                'name' => $this->l('Swedish'),
+            ),
+            array(
+                'id' => 'nb-NO',
+                'name' => $this->l('Norwegian Bokmål'),
+            ),
+            array(
+                'id' => 'da-DK',
+                'name' => $this->l('Danish'),
             ),
         );
     }
