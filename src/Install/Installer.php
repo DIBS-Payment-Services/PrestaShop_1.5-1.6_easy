@@ -16,6 +16,8 @@
 
 namespace Invertus\Dibs\Install;
 
+use Address;
+use Country;
 use Db;
 use Dibs;
 use Exception;
@@ -188,9 +190,9 @@ class Installer
         $configuration = $this->moduleConfiguration['configuration'];
 
         foreach ($configuration as $name => $value) {
-            // skip order state configuration
-            // since those will be saved after order states are created
-            if (strpos($name, 'ORDER_STATE') !== false) {
+            // skip order state & address configuration
+            // since those will be saved later
+            if (false !== strpos($name, 'ORDER_STATE') || false !== strpos($name, 'ADDRESS_ID')) {
                 continue;
             }
 
@@ -405,38 +407,74 @@ class Installer
      */
     protected function installDefaultAddresses()
     {
-        $sweedenAddress = new \Address();
-        $sweedenAddress->id_country = \Country::getByIso('SE');
-        $sweedenAddress->alias = 'Dibs Easy Sweeden Address';
-        $sweedenAddress->address1 = 'Address1';
-        $sweedenAddress->address2 = '';
-        $sweedenAddress->postcode = '00000';
-        $sweedenAddress->city = 'Any';
-        $sweedenAddress->firstname = 'Dibs';
-        $sweedenAddress->lastname = 'Easy';
-        $sweedenAddress->phone = '000000000';
-        $sweedenAddress->id_customer = 0;
-        $sweedenAddress->deleted = 1;
-
-        if (!$sweedenAddress->save()) {
+        if (!$this->installAddress('SE', 'DIBS_SWEEDEN_ADDRESS_ID')) {
             return false;
         }
 
-        $this->configurationAdapter->set('DIBS_SWEEDEN_ADDRESS_ID', $sweedenAddress->id);
+        if (!$this->installAddress('NO', 'DIBS_NORWAY_ADDRESS_ID')) {
+            return false;
+        }
+
+        if (!$this->installAddress('DK', 'DIBS_DENMARK_ADDRESS_ID')) {
+            return false;
+        }
 
         return true;
     }
 
     protected function uninstallDefaultAddresses()
     {
-        $idAddress = $this->configurationAdapter->get('DIBS_SWEEDEN_ADDRESS_ID');
+        $addressConfigs = [
+            'DIBS_SWEEDEN_ADDRESS_ID',
+            'DIBS_NORWAY_ADDRESS_ID',
+            'DIBS_DENMARK_ADDRESS_ID',
+        ];
 
-        if (!$idAddress) {
-            return true;
+        foreach ($addressConfigs as $addressConfig) {
+            $idAddress = $this->configurationAdapter->get($addressConfig);
+
+            if (!$idAddress) {
+                return true;
+            }
+
+            $address = new Address($idAddress);
+            $address->delete();
         }
 
-        $address = new \Address($idAddress);
-
-        return $address->delete();
+        return true;
     }
+
+    private function installAddress($countryIso, $countryAddressConfig)
+    {
+        $idCountry = Country::getByIso($countryIso);
+        $country = new Country($idCountry);
+
+        if (is_array($country->name)) {
+            $countryName = reset($country->name);
+        } else {
+            $countryName = $country->name;
+        }
+
+        $address = new Address();
+        $address->id_country = $country->id;
+        $address->alias = sprintf('Dibs Easy %s', $countryName);
+        $address->address1 = 'Address1';
+        $address->address2 = '';
+        $address->postcode = '00000';
+        $address->city = 'Any';
+        $address->firstname = 'Dibs';
+        $address->lastname = 'Easy';
+        $address->phone = '000000000';
+        $address->id_customer = 0;
+        $address->deleted = 1;
+
+        if (!$address->save()) {
+            throw new Exception('Failed to save default address');
+        }
+
+        $this->configurationAdapter->set($countryAddressConfig, $address->id);
+
+        return true;
+    }
+
 }

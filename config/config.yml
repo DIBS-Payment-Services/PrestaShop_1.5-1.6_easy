@@ -8,8 +8,8 @@ parameters:
     js_checkout_test_url: 'https://test.checkout.dibspayment.eu/v1/checkout.js?v=1'
     js_checkout_prod_url: 'https://checkout.dibspayment.eu/v1/checkout.js?v=1'
 
-    supported_currencies: ['SEK']
-    supported_countries: ['SWE']
+    supported_currencies: ['SEK', 'NOK', 'DKK']
+    supported_countries: ['SWE', 'NOR', 'DNK']
 
     module_settings:
         configuration:
@@ -26,6 +26,8 @@ parameters:
             DIBS_LANGUAGE: 'en-GB'
             DIBS_TEST_MODE: 1
             DIBS_SWEEDEN_ADDRESS_ID: ~
+            DIBS_NORWAY_ADDRESS_ID: ~
+            DIBS_DENMARK_ADDRESS_ID: ~
 
         order_states:
             - { name: 'Payment accepted in DIBS Easy', color: '#0094cf', paid: 1, invoice: 1, config: 'DIBS_ACCEPTED_ORDER_STATE_ID'}
