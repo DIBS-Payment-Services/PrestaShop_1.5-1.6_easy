@@ -24,6 +24,8 @@ class Dibs extends PaymentModule
      */
     private $container;
 
+    public $extra_mail_vars = array();
+
     /**
      * Dibs constructor.
      */
@@ -43,6 +45,8 @@ class Dibs extends PaymentModule
 
         $this->displayName = $this->l('DIBS Easy Checkout');
         $this->description = $this->l('Accept payments via DIBS Easy Checkout.');
+
+        $this->initExtraTemplateVars();
     }
 
     /**
@@ -298,49 +302,7 @@ class Dibs extends PaymentModule
         $idOrder = Order::getOrderByCartId($cart->id);
         $order = new Order($idOrder);
 
-        if ($this->name != $order->module || !Validate::isLoadedObject($order)) {
-            $params['extra_template_vars']['{dibs_html_block}'] = '';
-            $params['extra_template_vars']['{dibs_txt_block}'] = '';
-            return;
-        }
-
-        /** @var \Invertus\Dibs\Adapter\ConfigurationAdapter $configuration */
-        $configuration = $this->get('dibs.adapter.configuration');
-        /** @var \Invertus\Dibs\Repository\OrderPaymentRepository $orderPaymentRepository */
-        $orderPaymentRepository = $this->get('dibs.repository.order_payment');
-        $orderPayment = $orderPaymentRepository->findOrderPaymentByCartId($cart->id);
-
-        /** @var \Invertus\Dibs\Action\PaymentGetAction $getPaymentAction */
-        $getPaymentAction = $this->get('dibs.action.payment_get');
-        $payment = $getPaymentAction->getPayment($orderPayment->id_payment);
-
-        $idLang = $this->context->language->id;
-        $carrier = new Carrier($order->id_carrier);
-        $orderState = $order->getCurrentOrderState();
-
-        $tplVars = array(
-            'dibs_payment_id' => $orderPayment->id_payment,
-            'dibs_delay' => $carrier->delay[$idLang],
-            'dibs_contact_email' => $configuration->get('PS_SHOP_EMAIL'),
-            'dibs_order_state' => $orderState->name[$idLang],
-            'dibs_payment_type' => '',
-            'dibs_masked_pan' => '',
-        );
-
-        if ($payment instanceof \Invertus\Dibs\Result\Payment) {
-            $paymentDetail = $payment->getPaymentDetail();
-            $tplVars['dibs_payment_type'] = $paymentDetail->getPaymentType();
-            $tplVars['dibs_masked_pan'] = $paymentDetail->getCardDetails()->getMaskedPan();
-        }
-
-        $this->context->smarty->assign($tplVars);
-
-        $params['extra_template_vars']['{dibs_html_block}'] = $this->context->smarty->fetch(
-            $this->getLocalPath().'views/templates/hook/actionGetExtraMailTemplateVars.tpl'
-        );
-        $params['extra_template_vars']['{dibs_txt_block}'] = $this->context->smarty->fetch(
-            $this->getLocalPath().'views/templates/hook/actionGetExtraMailTemplateVars.txt'
-        );
+        $params['extra_template_vars'] = $this->getExtraTemplateVars($order);
     }
 
     /**
@@ -474,6 +436,72 @@ class Dibs extends PaymentModule
     public function isPS16()
     {
         return version_compare(_PS_VERSION_, '1.6', '>=');
+    }
+
+    /**
+     * Initialize extra template vars
+     */
+    private function initExtraTemplateVars()
+    {
+        if (!Tools::isSubmit('id_order')) {
+            return;
+        }
+
+        $idOrder = Tools::getValue('id_order');
+        $order = new Order($idOrder);
+
+        $this->extra_mail_vars = $this->getExtraTemplateVars($order);
+    }
+
+    private function getExtraTemplateVars(Order $order)
+    {
+        if ($this->name != $order->module || !Validate::isLoadedObject($order)) {
+            $params['{dibs_html_block}'] = '';
+            $params['{dibs_txt_block}'] = '';
+
+            return $params;
+        }
+
+        /** @var \Invertus\Dibs\Adapter\ConfigurationAdapter $configuration */
+        $configuration = $this->get('dibs.adapter.configuration');
+        /** @var \Invertus\Dibs\Repository\OrderPaymentRepository $orderPaymentRepository */
+        $orderPaymentRepository = $this->get('dibs.repository.order_payment');
+        $orderPayment = $orderPaymentRepository->findOrderPaymentByCartId($order->id_cart);
+
+        /** @var \Invertus\Dibs\Action\PaymentGetAction $getPaymentAction */
+        $getPaymentAction = $this->get('dibs.action.payment_get');
+        $payment = $getPaymentAction->getPayment($orderPayment->id_payment);
+
+        $idLang = $this->context->language->id;
+        $carrier = new Carrier($order->id_carrier);
+        $orderState = $order->getCurrentOrderState();
+
+        $tplVars = array(
+            'dibs_payment_id' => $orderPayment->id_payment,
+            'dibs_delay' => $carrier->delay[$idLang],
+            'dibs_contact_email' => $configuration->get('PS_SHOP_EMAIL'),
+            'dibs_order_state' => $orderState->name[$idLang],
+            'dibs_payment_type' => '',
+            'dibs_masked_pan' => '',
+        );
+
+        if ($payment instanceof \Invertus\Dibs\Result\Payment) {
+            $paymentDetail = $payment->getPaymentDetail();
+            $tplVars['dibs_payment_type'] = $paymentDetail->getPaymentType();
+            $tplVars['dibs_masked_pan'] = $paymentDetail->getCardDetails()->getMaskedPan();
+        }
+
+        $this->context->smarty->assign($tplVars);
+
+        $params['{dibs_html_block}'] = $this->context->smarty->fetch(
+            $this->getLocalPath().'views/templates/hook/actionGetExtraMailTemplateVars.tpl'
+        );
+
+        $params['{dibs_txt_block}'] = $this->context->smarty->fetch(
+            $this->getLocalPath().'views/templates/hook/actionGetExtraMailTemplateVars.txt'
+        );
+
+        return $params;
     }
 
     /**
