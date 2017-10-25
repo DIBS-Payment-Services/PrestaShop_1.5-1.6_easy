@@ -5,7 +5,7 @@
 {l s='Payment type' mod='dibs'}:{$dibs_payment_type|escape:'htmlall':'UTF-8'}
 
 {if not empty($dibs_masked_pan)}
-    {l s='Credit card number' mod='dibs'}:{$dibs_masked_pan|escape:'htmlall':'UTF-8'}
+{l s='Credit card number' mod='dibs'}:{$dibs_masked_pan|escape:'htmlall':'UTF-8'}
 {/if}
 
 {l s='Delay' mod='dibs'}: {$dibs_delay|escape:'htmlall':'UTF-8'}
