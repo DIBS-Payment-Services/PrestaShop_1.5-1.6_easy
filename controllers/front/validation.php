@@ -270,6 +270,13 @@ class DibsValidationModuleFrontController extends ModuleFrontController
         switch ($alpha3Iso) {
             case 'SWE':
                 $alpha2Iso = 'SE';
+                break;
+            case 'DNK':
+                $alpha2Iso = 'DK';
+                break;
+            case 'NOR':
+                $alpha2Iso = 'NO';
+                break;
         }
 
         return $alpha2Iso;

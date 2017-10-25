@@ -34,7 +34,7 @@ class Dibs extends PaymentModule
         $this->name = 'dibs';
         $this->author = 'Invertus';
         $this->tab = 'payments_gateways';
-        $this->version = '1.0.0';
+        $this->version = '1.0.2';
         $this->controllers = array('validation', 'checkout');
         $this->compatibility = array('min' => '1.5.6.0', 'max' => '1.6.1.99');
 

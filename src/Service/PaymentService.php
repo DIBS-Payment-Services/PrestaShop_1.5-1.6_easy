@@ -331,7 +331,7 @@ class PaymentService
                 $paymentArray['paymentDetails']['cardDetails']['maskedPan'] :
                 null
         );
-        $cardDetails->setMaskedPan(
+        $cardDetails->setExpirityDate(
             isset($paymentArray['paymentDetails']['cardDetails']['expiryDate']) ?
                 $paymentArray['paymentDetails']['cardDetails']['expiryDate'] :
                 null

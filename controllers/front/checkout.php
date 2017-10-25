@@ -131,7 +131,13 @@ class DibsCheckoutModuleFrontController extends ModuleFrontController
         CartRule::autoAddToCart($this->context);
 
         if (!$this->context->cart->id_address_delivery) {
-            $this->context->cart->id_address_delivery = Configuration::get('DIBS_SWEEDEN_ADDRESS_ID');
+            $this->context->cart->id_address_delivery = $this->getDeliveryAddressId();
+            $this->context->cart->save();
+        }
+
+        if (!$this->context->cart->id_carrier) {
+            $idCarrierDefault = (int) Configuration::get('PS_CARRIER_DEFAULT');
+            $this->context->cart->id_carrier = $idCarrierDefault;
             $this->context->cart->save();
         }
 
@@ -321,6 +327,26 @@ class DibsCheckoutModuleFrontController extends ModuleFrontController
         }
 
         return true;
+    }
+
+    protected function getDeliveryAddressId()
+    {
+        $idAddress = null;
+
+        switch ($this->context->currency->iso_code) {
+            case 'DKK':
+                $idAddress = Configuration::get('DIBS_DENMARK_ADDRESS_ID');
+                break;
+            case 'NOK':
+                $idAddress = Configuration::get('DIBS_NORWAY_ADDRESS_ID');
+                break;
+            case 'SEK':
+            default:
+                $idAddress = Configuration::get('DIBS_SWEEDEN_ADDRESS_ID');
+                break;
+        }
+
+        return (int) $idAddress;
     }
 
     /**
