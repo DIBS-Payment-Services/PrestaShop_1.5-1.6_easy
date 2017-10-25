@@ -55,11 +55,13 @@ class DibsValidationModuleFrontController extends ModuleFrontController
      */
     public function postProcess()
     {
+        $idCart = $this->context->cart->id;
+
         // Get payment which is associated with cart
         // It's simple mapping (id_cart - id_order - id_payment (dibs) - id_charge (dibs) - etc.)
         /** @var \Invertus\Dibs\Repository\OrderPaymentRepository $orderPaymentRepository */
         $orderPaymentRepository = $this->module->get('dibs.repository.order_payment');
-        $orderPayment = $orderPaymentRepository->findOrderPaymentByCartId($this->context->cart->id);
+        $orderPayment = $orderPaymentRepository->findOrderPaymentByCartId($idCart);
         if (!$orderPayment instanceof DibsOrderPayment) {
             $this->addFlash('error', $this->module->l('Unexpected error occured.', self::FILENAME));
             Tools::redirect($this->context->link->getModuleLink($this->module->name, 'checkout'));
@@ -94,13 +96,21 @@ class DibsValidationModuleFrontController extends ModuleFrontController
 
         // After processing is done, let's create order
         try {
+            $idOrderState = (int) Configuration::get('DIBS_ACCEPTED_ORDER_STATE_ID');
+
+            $extraTplVars = array();
+            if (!$this->module->isPS16()) {
+                $extraTplVars =
+                    $this->module->getExtraTemplateVars($idCart, $this->context->cart->id_carrier, $idOrderState);
+            }
+
             $this->module->validateOrder(
-                $this->context->cart->id,
-                (int) Configuration::get('DIBS_ACCEPTED_ORDER_STATE_ID'),
+                $idCart,
+                $idOrderState,
                 $this->context->cart->getOrderTotal(),
                 $this->module->displayName,
                 null,
-                array(),
+                $extraTplVars,
                 $this->context->currency->id,
                 false,
                 $this->context->cart->secure_key
