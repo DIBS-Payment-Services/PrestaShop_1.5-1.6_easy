@@ -50,9 +50,14 @@ class AdminOrdersController extends AdminOrdersControllerCore
     {
         $idOrders = Tools::getValue('orderBox');
 
-        /** @var Dibs $dibs */
-        $dibs = Module::getInstanceByName('dibs');
-        /** @var \Invertus\Dibs\Action\PaymentChargeAction $chargeAction */
+        if (empty($idOrders)) {
+            $this->errors[] = $this->l('No orders have been selected');
+            return;
+        }
+
+        /** @var DibsEasy $dibs */
+        $dibs = Module::getInstanceByName('dibseasy');
+        /** @var \Invertus\DibsEasy\Action\PaymentChargeAction $chargeAction */
         $chargeAction = $dibs->get('dibs.action.payment_charge');
 
         $result = $chargeAction->chargePayments($idOrders);
@@ -73,9 +78,14 @@ class AdminOrdersController extends AdminOrdersControllerCore
     {
         $idOrders = Tools::getValue('orderBox');
 
-        /** @var Dibs $dibs */
-        $dibs = Module::getInstanceByName('dibs');
-        /** @var \Invertus\Dibs\Action\PaymentCancelAction $cancelAction */
+        if (empty($idOrders)) {
+            $this->errors[] = $this->l('No orders have been selected');
+            return;
+        }
+
+        /** @var DibsEasy $dibs */
+        $dibs = Module::getInstanceByName('dibseasy');
+        /** @var \Invertus\DibsEasy\Action\PaymentCancelAction $cancelAction */
         $cancelAction = $dibs->get('dibs.action.payment_cancel');
 
         $result = $cancelAction->cancelOrderPayments($idOrders);
@@ -96,9 +106,14 @@ class AdminOrdersController extends AdminOrdersControllerCore
     {
         $orders = Tools::getValue('orderBox');
 
-        /** @var Dibs $dibs */
-        $dibs = Module::getInstanceByName('dibs');
-        /** @var \Invertus\Dibs\Action\PaymentRefundAction $refundAction */
+        if (empty($orders)) {
+            $this->errors[] = $this->l('No orders have been selected');
+            return;
+        }
+
+        /** @var DibsEasy $dibs */
+        $dibs = Module::getInstanceByName('dibseasy');
+        /** @var \Invertus\DibsEasy\Action\PaymentRefundAction $refundAction */
         $refundAction = $dibs->get('dibs.action.payment_refund');
 
         $result = $refundAction->refundPayments($orders);
@@ -120,9 +135,9 @@ class AdminOrdersController extends AdminOrdersControllerCore
         $idOrder = Tools::getValue('id_order');
         $order = new Order($idOrder);
 
-        /** @var Dibs $dibs */
-        $dibs = Module::getInstanceByName('dibs');
-        /** @var \Invertus\Dibs\Action\PaymentCancelAction $cancelAction */
+        /** @var DibsEasy $dibs */
+        $dibs = Module::getInstanceByName('dibseasy');
+        /** @var \Invertus\DibsEasy\Action\PaymentCancelAction $cancelAction */
         $cancelAction = $dibs->get('dibs.action.payment_cancel');
 
         $success = $cancelAction->cancelOrderPayment($order);
@@ -139,9 +154,9 @@ class AdminOrdersController extends AdminOrdersControllerCore
         $idOrder = Tools::getValue('id_order');
         $order = new Order($idOrder);
 
-        /** @var Dibs $dibs */
-        $dibs = Module::getInstanceByName('dibs');
-        /** @var \Invertus\Dibs\Action\PaymentChargeAction $chargeAction */
+        /** @var DibsEasy $dibs */
+        $dibs = Module::getInstanceByName('dibseasy');
+        /** @var \Invertus\DibsEasy\Action\PaymentChargeAction $chargeAction */
         $chargeAction = $dibs->get('dibs.action.payment_charge');
 
         $success = $chargeAction->chargePayment($order);
@@ -158,9 +173,9 @@ class AdminOrdersController extends AdminOrdersControllerCore
         $idOrder = Tools::getValue('id_order');
         $order = new Order($idOrder);
 
-        /** @var Dibs $dibs */
-        $dibs = Module::getInstanceByName('dibs');
-        /** @var \Invertus\Dibs\Action\PaymentRefundAction $refundAction */
+        /** @var DibsEasy $dibs */
+        $dibs = Module::getInstanceByName('dibseasy');
+        /** @var \Invertus\DibsEasy\Action\PaymentRefundAction $refundAction */
         $refundAction = $dibs->get('dibs.action.payment_refund');
 
         $success = $refundAction->refundPayment($order);
@@ -222,7 +237,7 @@ class AdminOrdersController extends AdminOrdersControllerCore
 
     private function renderListAction(array $params)
     {
-        $dibs = Module::getInstanceByName('dibs');
+        $dibs = Module::getInstanceByName('dibseasy');
 
         $this->context->smarty->assign($params);
 
@@ -231,9 +246,9 @@ class AdminOrdersController extends AdminOrdersControllerCore
 
     private function getOrderPayment($idOrder)
     {
-        /** @var Dibs $dibs */
-        $dibs = Module::getInstanceByName('dibs');
-        /** @var \Invertus\Dibs\Repository\OrderPaymentRepository $orderPaymentRepository */
+        /** @var DibsEasy $dibs */
+        $dibs = Module::getInstanceByName('dibseasy');
+        /** @var \Invertus\DibsEasy\Repository\OrderPaymentRepository $orderPaymentRepository */
         $orderPaymentRepository = $dibs->get('dibs.repository.order_payment');
 
         return $orderPaymentRepository->findOrderPaymentByOrderId($idOrder);

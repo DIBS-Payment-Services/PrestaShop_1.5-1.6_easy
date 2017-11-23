@@ -14,20 +14,19 @@
  * International Registered Trademark & Property of INVERTUS, UAB
  */
 
-namespace Invertus\Dibs\Action;
+namespace Invertus\DibsEasy\Action;
 
-use Cart;
-use Dibs;
-use Invertus\Dibs\Adapter\ConfigurationAdapter;
-use Invertus\Dibs\Payment\PaymentChargeRequest;
-use Invertus\Dibs\Repository\OrderPaymentRepository;
-use Invertus\Dibs\Service\PaymentService;
+use Invertus\DibsEasy\Adapter\ConfigurationAdapter;
+use Invertus\DibsEasy\Payment\PaymentChargeRequest;
+use Invertus\DibsEasy\Repository\OrderPaymentRepository;
+use Invertus\DibsEasy\Service\PaymentService;
+use Module;
 use Order;
 
 /**
  * Class PaymentChargeAction
  *
- * @package Invertus\Dibs\Action
+ * @package Invertus\DibsEasy\Action
  */
 class PaymentChargeAction extends AbstractAction
 {
@@ -47,7 +46,7 @@ class PaymentChargeAction extends AbstractAction
     private $configurationAdapter;
 
     /**
-     * @var Dibs
+     * @var Module
      */
     private $module;
 
@@ -57,13 +56,13 @@ class PaymentChargeAction extends AbstractAction
      * @param PaymentService $paymentService
      * @param OrderPaymentRepository $orderPaymentRepository
      * @param ConfigurationAdapter $configurationAdapter
-     * @param Dibs $module
+     * @param Module $module
      */
     public function __construct(
         PaymentService $paymentService,
         OrderPaymentRepository $orderPaymentRepository,
         ConfigurationAdapter $configurationAdapter,
-        Dibs $module
+        Module $module
     ) {
         $this->paymentService = $paymentService;
         $this->orderPaymentRepository = $orderPaymentRepository;
@@ -79,7 +78,7 @@ class PaymentChargeAction extends AbstractAction
      */
     public function chargePayment(Order $order)
     {
-        if ('dibs' != $order->module) {
+        if ('dibseasy' != $order->module) {
             return false;
         }
 
@@ -151,7 +150,7 @@ class PaymentChargeAction extends AbstractAction
     /**
      * Module instance used for translations
      *
-     * @return \Dibs
+     * @return \Module
      */
     protected function getModule()
     {

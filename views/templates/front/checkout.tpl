@@ -35,7 +35,7 @@
     </div>
 
     <div class="col-xs-12 col-sm-12 col-md-7">
-        <h1 class="page-heading">{l s='Easy Checkout' mod='dibs'}</h1>
+        <h1 class="page-heading">{l s='Easy Checkout' mod='dibseasy'}</h1>
         <div id="dibs-complete-checkout"></div>
     </div>
 </div>
@@ -45,7 +45,7 @@
         <a class="btn btn-default button button-small" href="{$regularCheckoutUrl|escape:'htmlall':'UTF-8'}">
             <span>
                 <i class="icon-chevron-left left"></i>
-                {l s='Switch to regular checkout' mod='dibs'}
+                {l s='Switch to regular checkout' mod='dibseasy'}
             </span>
         </a>
     </div>

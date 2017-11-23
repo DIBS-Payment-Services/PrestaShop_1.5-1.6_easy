@@ -15,31 +15,31 @@
 
 <br>
 <fieldset>
-    <legend>{l s='DIBS Easy payment actions' mod='dibs'}</legend>
+    <legend>{l s='DIBS Easy payment actions' mod='dibseasy'}</legend>
     {if $dibsPaymentCanBeCharged}
         <a href="{$dibsChargeUrl|escape:'htmlall':'UTF-8'}"
            class="button js-dibs-confirmation"
-           data-confirmation-message="{l s='Are you sure you want to Charge payment?' mod='dibs'}"
+           data-confirmation-message="{l s='Are you sure you want to Charge payment?' mod='dibseasy'}"
         >
-            {l s='Charge payment' mod='dibs'}
+            {l s='Charge payment' mod='dibseasy'}
         </a>
     {/if}
 
     {if $dibsPaymentCanBeCanceled}
         <a href="{$dibsCancelUrl|escape:'htmlall':'UTF-8'}"
            class="button js-dibs-confirmation"
-           data-confirmation-message="{l s='Are you sure you want to Cancel payment?' mod='dibs'}"
+           data-confirmation-message="{l s='Are you sure you want to Cancel payment?' mod='dibseasy'}"
         >
-            {l s='Cancel payment' mod='dibs'}
+            {l s='Cancel payment' mod='dibseasy'}
         </a>
     {/if}
 
     {if $dibsPaymentCanBeRefunded}
         <a href="{$dibsRefundUrl|escape:'htmlall':'UTF-8'}"
            class="button js-dibs-confirmation"
-           data-confirmation-message="{l s='Are you sure you want to Refund payment?' mod='dibs'}"
+           data-confirmation-message="{l s='Are you sure you want to Refund payment?' mod='dibseasy'}"
         >
-            {l s='Refund payment' mod='dibs'}
+            {l s='Refund payment' mod='dibseasy'}
         </a>
     {/if}
 </fieldset>

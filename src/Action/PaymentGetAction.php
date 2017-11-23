@@ -14,11 +14,11 @@
  * International Registered Trademark & Property of INVERTUS, UAB
  */
 
-namespace Invertus\Dibs\Action;
+namespace Invertus\DibsEasy\Action;
 
-use Invertus\Dibs\Payment\PaymentGetRequest;
-use Invertus\Dibs\Result\Payment;
-use Invertus\Dibs\Service\PaymentService;
+use Invertus\DibsEasy\Payment\PaymentGetRequest;
+use Invertus\DibsEasy\Result\Payment;
+use Invertus\DibsEasy\Service\PaymentService;
 
 class PaymentGetAction
 {

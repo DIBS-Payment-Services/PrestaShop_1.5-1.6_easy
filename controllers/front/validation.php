@@ -14,12 +14,12 @@
  * International Registered Trademark & Property of INVERTUS, UAB
  */
 
-class DibsValidationModuleFrontController extends ModuleFrontController
+class DibsEasyValidationModuleFrontController extends ModuleFrontController
 {
     const FILENAME = 'validation';
 
     /**
-     * @var Dibs
+     * @var DibsEasy
      */
     public $module;
 
@@ -59,7 +59,7 @@ class DibsValidationModuleFrontController extends ModuleFrontController
 
         // Get payment which is associated with cart
         // It's simple mapping (id_cart - id_order - id_payment (dibs) - id_charge (dibs) - etc.)
-        /** @var \Invertus\Dibs\Repository\OrderPaymentRepository $orderPaymentRepository */
+        /** @var \Invertus\DibsEasy\Repository\OrderPaymentRepository $orderPaymentRepository */
         $orderPaymentRepository = $this->module->get('dibs.repository.order_payment');
         $orderPayment = $orderPaymentRepository->findOrderPaymentByCartId($idCart);
         if (!$orderPayment instanceof DibsOrderPayment) {
@@ -117,7 +117,7 @@ class DibsValidationModuleFrontController extends ModuleFrontController
             );
         } catch (Exception $e) {
             // If we were unable to create order then cancel payment and redirect back to checkout
-            /** @var \Invertus\Dibs\Action\PaymentCancelAction $paymentCancelAction */
+            /** @var \Invertus\DibsEasy\Action\PaymentCancelAction $paymentCancelAction */
             $paymentCancelAction = $this->module->get('dibs.action.payment_cancel');
             $paymentCancelAction->cancelCartPayment($this->context->cart);
 
@@ -153,11 +153,11 @@ class DibsValidationModuleFrontController extends ModuleFrontController
     }
 
     /**
-     * @param \Invertus\Dibs\Result\Payment $payment
+     * @param \Invertus\DibsEasy\Result\Payment $payment
      *
      * @return bool
      */
-    protected function processSaveCartCustomer(\Invertus\Dibs\Result\Payment $payment)
+    protected function processSaveCartCustomer(\Invertus\DibsEasy\Result\Payment $payment)
     {
         $customer = new Customer($this->context->cart->id_customer);
         if (Validate::isLoadedObject($customer)) {
@@ -221,11 +221,11 @@ class DibsValidationModuleFrontController extends ModuleFrontController
      *
      * @param string $paymentId
      *
-     * @return bool|\Invertus\Dibs\Result\Payment
+     * @return bool|\Invertus\DibsEasy\Result\Payment
      */
     protected function validateCartPayment($paymentId)
     {
-        /** @var \Invertus\Dibs\Action\PaymentGetAction $paymentGetAction */
+        /** @var \Invertus\DibsEasy\Action\PaymentGetAction $paymentGetAction */
         $paymentGetAction = $this->module->get('dibs.action.payment_get');
         $payment = $paymentGetAction->getPayment($paymentId);
 
@@ -251,11 +251,11 @@ class DibsValidationModuleFrontController extends ModuleFrontController
     /**
      * Validate if payment country is valid
      *
-     * @param \Invertus\Dibs\Result\Payment $payment
+     * @param \Invertus\DibsEasy\Result\Payment $payment
      *
      * @return bool
      */
-    protected function validatePaymentCountry(\Invertus\Dibs\Result\Payment $payment)
+    protected function validatePaymentCountry(\Invertus\DibsEasy\Result\Payment $payment)
     {
         $country = $payment->getConsumer()
             ->getShippingAddress()
@@ -334,7 +334,7 @@ class DibsValidationModuleFrontController extends ModuleFrontController
             return true;
         }
 
-        /** @var \Invertus\Dibs\Action\PaymentCancelAction $paymentCancelAction */
+        /** @var \Invertus\DibsEasy\Action\PaymentCancelAction $paymentCancelAction */
         $paymentCancelAction = $this->module->get('dibs.action.payment_cancel');
 
         return $paymentCancelAction->cancelCartPayment($this->context->cart);

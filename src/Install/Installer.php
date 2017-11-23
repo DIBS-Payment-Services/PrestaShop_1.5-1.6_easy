@@ -14,29 +14,29 @@
  * International Registered Trademark & Property of INVERTUS, UAB
  */
 
-namespace Invertus\Dibs\Install;
+namespace Invertus\DibsEasy\Install;
 
 use Address;
 use Country;
 use Db;
-use Dibs;
 use Exception;
-use Invertus\Dibs\Adapter\ConfigurationAdapter;
-use Invertus\Dibs\Adapter\LanguageAdapter;
-use Invertus\Dibs\Adapter\TabAdapter;
-use Invertus\Dibs\Adapter\ToolsAdapter;
+use Invertus\DibsEasy\Adapter\ConfigurationAdapter;
+use Invertus\DibsEasy\Adapter\LanguageAdapter;
+use Invertus\DibsEasy\Adapter\TabAdapter;
+use Invertus\DibsEasy\Adapter\ToolsAdapter;
+use Module;
 use OrderState;
 use Tab;
 
 /**
  * Class Installer
  *
- * @package Invertus\Dibs\Install
+ * @package Invertus\DibsEasy\Install
  */
 class Installer
 {
     /**
-     * @var Dibs
+     * @var Module
      */
     private $module;
 
@@ -73,7 +73,7 @@ class Installer
     /**
      * Installer constructor.
      *
-     * @param Dibs $module
+     * @param Module $module
      * @param ConfigurationAdapter $configurationAdapter
      * @param LanguageAdapter $languageAdapter
      * @param TabAdapter $tabAdapter
@@ -82,7 +82,7 @@ class Installer
      * @param array $config
      */
     public function __construct(
-        Dibs $module,
+        Module $module,
         ConfigurationAdapter $configurationAdapter,
         LanguageAdapter $languageAdapter,
         TabAdapter $tabAdapter,

@@ -14,7 +14,7 @@
  * International Registered Trademark & Property of INVERTUS, UAB
  */
 
-namespace Invertus\Dibs\Adapter;
+namespace Invertus\DibsEasy\Adapter;
 
 use Currency;
 use Tools;

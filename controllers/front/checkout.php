@@ -14,13 +14,13 @@
  * International Registered Trademark & Property of INVERTUS, UAB
  */
 
-class DibsCheckoutModuleFrontController extends ModuleFrontController
+class DibsEasyCheckoutModuleFrontController extends ModuleFrontController
 {
     const CHANGE_DELIVERY_OPTION_ACTION = 'changeDeliveryOption';
     const ADD_DISCOUNT_ACTION = 'addDiscount';
 
     /**
-     * @var Dibs
+     * @var DibsEasy
      */
     public $module;
 
@@ -141,7 +141,7 @@ class DibsCheckoutModuleFrontController extends ModuleFrontController
             $this->context->cart->save();
         }
 
-        /** @var \Invertus\Dibs\Repository\OrderPaymentRepository $orderPaymentRepository */
+        /** @var \Invertus\DibsEasy\Repository\OrderPaymentRepository $orderPaymentRepository */
         $orderPaymentRepository = $this->module->get('dibs.repository.order_payment');
         $orderPayment = $orderPaymentRepository->findOrderPaymentByCartId($this->context->cart->id);
         if ($orderPayment) {
@@ -162,7 +162,7 @@ class DibsCheckoutModuleFrontController extends ModuleFrontController
         if (Tools::isSubmit('paymentId')) {
             $paymentId = Tools::getValue('paymentId');
 
-            /** @var \Invertus\Dibs\Action\PaymentGetAction $paymentGetAction */
+            /** @var \Invertus\DibsEasy\Action\PaymentGetAction $paymentGetAction */
             $paymentGetAction = $this->module->get('dibs.action.payment_get');
             $payment = $paymentGetAction->getPayment($paymentId);
 
@@ -187,7 +187,7 @@ class DibsCheckoutModuleFrontController extends ModuleFrontController
             $orderPayment->id_cart = $this->context->cart->id;
             $orderPayment->save();
         } else {
-            /** @var \Invertus\Dibs\Action\PaymentCreateAction $paymentCreateAction */
+            /** @var \Invertus\DibsEasy\Action\PaymentCreateAction $paymentCreateAction */
             $paymentCreateAction = $this->module->get('dibs.action.payment_create');
             $orderPayment = $paymentCreateAction->createPayment($this->context->cart);
 

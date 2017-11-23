@@ -14,12 +14,12 @@
  * International Registered Trademark & Property of INVERTUS, UAB
  */
 
-namespace Invertus\Dibs\Service;
+namespace Invertus\DibsEasy\Service;
 
 /**
  * Class ApiResponse
  *
- * @package Invertus\Dibs\Service
+ * @package Invertus\DibsEasy\Service
  */
 class ApiResponse
 {

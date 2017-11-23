@@ -14,7 +14,7 @@
  * International Registered Trademark & Property of INVERTUS, UAB
  */
 
-namespace Invertus\Dibs\Repository;
+namespace Invertus\DibsEasy\Repository;
 
 use Db;
 use DbQuery;
@@ -22,7 +22,7 @@ use DbQuery;
 /**
  * Class OrderPaymentRepository
  *
- * @package Invertus\Dibs\Repository
+ * @package Invertus\DibsEasy\Repository
  */
 class OrderPaymentRepository
 {

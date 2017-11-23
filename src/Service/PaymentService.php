@@ -14,33 +14,33 @@
  * International Registered Trademark & Property of INVERTUS, UAB
  */
 
-namespace Invertus\Dibs\Service;
+namespace Invertus\DibsEasy\Service;
 
 use Cart;
 use Currency;
-use Invertus\Dibs\Adapter\LinkAdapter;
-use Invertus\Dibs\Adapter\ToolsAdapter;
-use Invertus\Dibs\Payment\PaymentCancelRequest;
-use Invertus\Dibs\Payment\PaymentChargeRequest;
-use Invertus\Dibs\Payment\PaymentCreateRequest;
-use Invertus\Dibs\Payment\PaymentGetRequest;
-use Invertus\Dibs\Payment\PaymentRefundRequest;
-use Invertus\Dibs\Repository\OrderPaymentRepository;
-use Invertus\Dibs\Result\Address;
-use Invertus\Dibs\Result\CardDetails;
-use Invertus\Dibs\Result\Consumer;
-use Invertus\Dibs\Result\InvoiceDetails;
-use Invertus\Dibs\Result\OrderDetail;
-use Invertus\Dibs\Result\Payment;
-use Invertus\Dibs\Result\PaymentDetail;
-use Invertus\Dibs\Result\Person;
-use Invertus\Dibs\Result\PhoneNumber;
-use Invertus\Dibs\Result\Summary;
+use Invertus\DibsEasy\Adapter\LinkAdapter;
+use Invertus\DibsEasy\Adapter\ToolsAdapter;
+use Invertus\DibsEasy\Payment\PaymentCancelRequest;
+use Invertus\DibsEasy\Payment\PaymentChargeRequest;
+use Invertus\DibsEasy\Payment\PaymentCreateRequest;
+use Invertus\DibsEasy\Payment\PaymentGetRequest;
+use Invertus\DibsEasy\Payment\PaymentRefundRequest;
+use Invertus\DibsEasy\Repository\OrderPaymentRepository;
+use Invertus\DibsEasy\Result\Address;
+use Invertus\DibsEasy\Result\CardDetails;
+use Invertus\DibsEasy\Result\Consumer;
+use Invertus\DibsEasy\Result\InvoiceDetails;
+use Invertus\DibsEasy\Result\OrderDetail;
+use Invertus\DibsEasy\Result\Payment;
+use Invertus\DibsEasy\Result\PaymentDetail;
+use Invertus\DibsEasy\Result\Person;
+use Invertus\DibsEasy\Result\PhoneNumber;
+use Invertus\DibsEasy\Result\Summary;
 
 /**
  * Class PaymentService
  *
- * @package Invertus\Dibs\Service
+ * @package Invertus\DibsEasy\Service
  */
 class PaymentService
 {

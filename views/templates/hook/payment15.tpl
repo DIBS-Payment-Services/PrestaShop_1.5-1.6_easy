@@ -14,9 +14,9 @@
 *}
 
 <p class="payment_module">
-    <a href="{$dibs_payment_url|escape:'htmlall':'UTF-8'}" title="{l s='Pay by DIBS Easy Checkout' mod='dibs'}">
-        <img src="{$dibs_img|escape:'htmlall':'UTF-8'}" alt="{l s='Pay by DIBS Easy Checkout' mod='dibs'}" >
-        {l s='Pay by DIBS Easy Checkout' mod='dibs'}
-        {l s='(order processing will be faster)' mod='dibs'}
+    <a href="{$dibs_payment_url|escape:'htmlall':'UTF-8'}" title="{l s='Pay by DIBS Easy Checkout' mod='dibseasy'}">
+        <img src="{$dibs_img|escape:'htmlall':'UTF-8'}" alt="{l s='Pay by DIBS Easy Checkout' mod='dibseasy'}" >
+        {l s='Pay by DIBS Easy Checkout' mod='dibseasy'}
+        {l s='(order processing will be faster)' mod='dibseasy'}
     </a>
 </p>

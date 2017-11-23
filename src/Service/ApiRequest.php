@@ -14,18 +14,18 @@
  * International Registered Trademark & Property of INVERTUS, UAB
  */
 
-namespace Invertus\Dibs\Service;
+namespace Invertus\DibsEasy\Service;
 
 use Exception;
 use Guzzle\Http\ClientInterface;
 use Guzzle\Http\Exception\ServerErrorResponseException;
 use Guzzle\Stream\StreamInterface;
-use Invertus\Dibs\Adapter\ToolsAdapter;
+use Invertus\DibsEasy\Adapter\ToolsAdapter;
 
 /**
  * Class ApiService
  *
- * @package Invertus\Dibs\Service
+ * @package Invertus\DibsEasy\Service
  */
 class ApiRequest
 {

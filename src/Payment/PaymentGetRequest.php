@@ -14,7 +14,7 @@
  * International Registered Trademark & Property of INVERTUS, UAB
  */
 
-namespace Invertus\Dibs\Payment;
+namespace Invertus\DibsEasy\Payment;
 
 class PaymentGetRequest
 {

@@ -14,27 +14,27 @@
  * International Registered Trademark & Property of INVERTUS, UAB
  */
 
-namespace Invertus\Dibs\Action;
+namespace Invertus\DibsEasy\Action;
 
 use Address;
 use Carrier;
 use Cart;
-use Invertus\Dibs\Adapter\PriceRoundAdapter;
-use Invertus\Dibs\Payment\PaymentItem;
-use Invertus\Dibs\Util\NameNormalizer;
+use Invertus\DibsEasy\Adapter\PriceRoundAdapter;
+use Invertus\DibsEasy\Payment\PaymentItem;
+use Invertus\DibsEasy\Util\NameNormalizer;
 use Order;
 
 /**
  * Class AbstractAction
  *
- * @package Invertus\Dibs\Action
+ * @package Invertus\DibsEasy\Action
  */
 abstract class AbstractAction
 {
     /**
      * Module instance used for translations
      *
-     * @return \Dibs
+     * @return \DibsEasy
      */
     abstract protected function getModule();
 

@@ -14,7 +14,7 @@
  * International Registered Trademark & Property of INVERTUS, UAB
  */
 
-namespace Invertus\Dibs\Result;
+namespace Invertus\DibsEasy\Result;
 
 class Summary
 {

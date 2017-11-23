@@ -11,5 +11,5 @@ return array(
     'Symfony\\Component\\EventDispatcher\\' => array($vendorDir . '/symfony/event-dispatcher'),
     'Symfony\\Component\\DependencyInjection\\' => array($vendorDir . '/symfony/dependency-injection'),
     'Symfony\\Component\\Config\\' => array($vendorDir . '/symfony/config'),
-    'Invertus\\Dibs\\' => array($baseDir . '/src'),
+    'Invertus\\DibsEasy\\' => array($baseDir . '/src'),
 );

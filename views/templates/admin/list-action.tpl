@@ -16,7 +16,7 @@
 <a href="{$href|escape:'html':'UTF-8'}"
    title="{$action|escape:'html':'UTF-8'}"
    class="js-dibs-confirmation"
-   data-confirmation-message="{l s='Are you sure you want to %s?' mod='dibs' sprintf=[$action]}"
+   data-confirmation-message="{l s='Are you sure you want to %s?' mod='dibseasy' sprintf=[$action]}"
 >
     {$action|escape:'html':'UTF-8'}
 </a>

@@ -14,20 +14,20 @@
  * International Registered Trademark & Property of INVERTUS, UAB
  */
 
-namespace Invertus\Dibs\Action;
+namespace Invertus\DibsEasy\Action;
 
 use Cart;
 use Currency;
-use Dibs;
 use DibsOrderPayment;
-use Invertus\Dibs\Adapter\LinkAdapter;
-use Invertus\Dibs\Payment\PaymentCreateRequest;
-use Invertus\Dibs\Service\PaymentService;
+use Invertus\DibsEasy\Adapter\LinkAdapter;
+use Invertus\DibsEasy\Payment\PaymentCreateRequest;
+use Invertus\DibsEasy\Service\PaymentService;
+use Module;
 
 /**
  * Class PaymentCreateAction
  *
- * @package Invertus\Dibs\Action
+ * @package Invertus\DibsEasy\Action
  */
 class PaymentCreateAction extends AbstractAction
 {
@@ -42,7 +42,7 @@ class PaymentCreateAction extends AbstractAction
     private $linkAdapter;
 
     /**
-     * @var Dibs
+     * @var Module
      */
     private $module;
 
@@ -56,13 +56,13 @@ class PaymentCreateAction extends AbstractAction
      *
      * @param PaymentService $paymentService
      * @param LinkAdapter $linkAdapter
-     * @param Dibs $module
+     * @param Module $module
      * @param array $supportedCountries
      */
     public function __construct(
         PaymentService $paymentService,
         LinkAdapter $linkAdapter,
-        Dibs $module,
+        Module $module,
         array $supportedCountries
     ) {
         $this->paymentService = $paymentService;
@@ -86,7 +86,7 @@ class PaymentCreateAction extends AbstractAction
         $createRequest->setAmount($cart->getOrderTotal());
         $createRequest->setCurrency($currency->iso_code);
         $createRequest->setReference($cart->id);
-        $createRequest->setUrl($this->linkAdapter->getModuleLink('dibs', 'checkout'));
+        $createRequest->setUrl($this->linkAdapter->getModuleLink('dibseasy', 'checkout'));
         $createRequest->setShippingCountries($this->supportedCountries);
 
         $items = $this->getCartProductItems($cart);

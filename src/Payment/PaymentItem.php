@@ -14,12 +14,12 @@
  * International Registered Trademark & Property of INVERTUS, UAB
  */
 
-namespace Invertus\Dibs\Payment;
+namespace Invertus\DibsEasy\Payment;
 
 /**
  * Class PaymentItem
  *
- * @package Invertus\Dibs\Payment
+ * @package Invertus\DibsEasy\Payment
  */
 class PaymentItem
 {

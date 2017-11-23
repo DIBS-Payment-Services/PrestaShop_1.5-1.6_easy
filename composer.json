@@ -16,7 +16,7 @@
     },
     "autoload": {
         "psr-4": {
-            "Invertus\\Dibs\\": "src/"
+            "Invertus\\DibsEasy\\": "src/"
         },
         "classmap": [
             "src/Entity/"

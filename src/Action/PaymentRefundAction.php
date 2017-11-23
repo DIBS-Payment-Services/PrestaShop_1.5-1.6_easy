@@ -14,22 +14,21 @@
  * International Registered Trademark & Property of INVERTUS, UAB
  */
 
-namespace Invertus\Dibs\Action;
+namespace Invertus\DibsEasy\Action;
 
-use Cart;
-use Dibs;
-use Invertus\Dibs\Adapter\ConfigurationAdapter;
-use Invertus\Dibs\Payment\PaymentItem;
-use Invertus\Dibs\Payment\PaymentRefundRequest;
-use Invertus\Dibs\Repository\OrderPaymentRepository;
-use Invertus\Dibs\Service\PaymentService;
-use Invertus\Dibs\Util\NameNormalizer;
+use Invertus\DibsEasy\Adapter\ConfigurationAdapter;
+use Invertus\DibsEasy\Payment\PaymentItem;
+use Invertus\DibsEasy\Payment\PaymentRefundRequest;
+use Invertus\DibsEasy\Repository\OrderPaymentRepository;
+use Invertus\DibsEasy\Service\PaymentService;
+use Invertus\DibsEasy\Util\NameNormalizer;
+use Module;
 use Order;
 
 /**
  * Class PaymentRefundAction
  *
- * @package Invertus\Dibs\Action
+ * @package Invertus\DibsEasy\Action
  */
 class PaymentRefundAction extends AbstractAction
 {
@@ -49,7 +48,7 @@ class PaymentRefundAction extends AbstractAction
     private $orderPaymentRepository;
 
     /**
-     * @var Dibs
+     * @var Module
      */
     private $module;
 
@@ -59,13 +58,13 @@ class PaymentRefundAction extends AbstractAction
      * @param PaymentService $paymentService
      * @param ConfigurationAdapter $configurationAdapter
      * @param OrderPaymentRepository $orderPaymentRepository
-     * @param Dibs $module
+     * @param Module $module
      */
     public function __construct(
         PaymentService $paymentService,
         ConfigurationAdapter $configurationAdapter,
         OrderPaymentRepository $orderPaymentRepository,
-        Dibs $module
+        Module $module
     ) {
         $this->paymentService = $paymentService;
         $this->configurationAdapter = $configurationAdapter;
@@ -82,7 +81,7 @@ class PaymentRefundAction extends AbstractAction
      */
     public function refundPayment(Order $order)
     {
-        if ('dibs' != $order->module) {
+        if ('dibseasy' != $order->module) {
             return false;
         }
 
@@ -128,7 +127,7 @@ class PaymentRefundAction extends AbstractAction
      */
     public function partialRefundPayment(Order $order, array $refundDetails, $shippingCostRefund)
     {
-        if ('dibs' != $order->module) {
+        if ('dibseasy' != $order->module) {
             return false;
         }
 
@@ -235,7 +234,7 @@ class PaymentRefundAction extends AbstractAction
     /**
      * Module instance used for translations
      *
-     * @return \Dibs
+     * @return \Module
      */
     protected function getModule()
     {

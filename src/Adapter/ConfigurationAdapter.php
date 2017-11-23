@@ -14,12 +14,12 @@
  * International Registered Trademark & Property of INVERTUS, UAB
  */
 
-namespace Invertus\Dibs\Adapter;
+namespace Invertus\DibsEasy\Adapter;
 
 /**
  * Class ConfigurationAdapter
  *
- * @package Invertus\Dibs\Adapter
+ * @package Invertus\DibsEasy\Adapter
  */
 class ConfigurationAdapter
 {

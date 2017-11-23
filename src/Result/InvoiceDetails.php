@@ -1,6 +1,6 @@
 <?php
 
-namespace Invertus\Dibs\Result;
+namespace Invertus\DibsEasy\Result;
 
 class InvoiceDetails
 {

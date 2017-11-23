@@ -1,6 +1,6 @@
 <?php
 
-namespace Invertus\Dibs\Util;
+namespace Invertus\DibsEasy\Util;
 
 class NameNormalizer
 {
