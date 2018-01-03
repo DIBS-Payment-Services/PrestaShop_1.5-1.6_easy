@@ -84,7 +84,6 @@ class AdminDibsConfigurationController extends ModuleAdminController
                         'class' => 'fixed-width-xxl',
                         'list' => $this->getLangs(),
                         'identifier' => 'id',
-                        'required' => true,
                     ),
                     'DIBS_TAC_URL' => array(
                         'title' => $this->l('Terms & Conditions URL'),
@@ -93,6 +92,7 @@ class AdminDibsConfigurationController extends ModuleAdminController
                         'type' => 'text',
                         'class' => 'fixed-width-xxl',
                         'required' => true,
+                        'size' => '30',
                     ),
                     'DIBS_TEST_MODE' => array(
                         'title' => $this->l('Testing mode'),
