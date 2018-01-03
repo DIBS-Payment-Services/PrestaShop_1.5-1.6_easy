@@ -339,6 +339,12 @@ class DibsEasy extends PaymentModule
         $person = $payment->getConsumer()->getPrivatePerson();
 
         switch ($shippingAddress->getCountry()) {
+            case 'DNK':
+                $countryIso = 'DK';
+                break;
+            case 'NOR':
+                $countryIso = 'NO';
+                break;
             default:
             case 'SWE':
                 $countryIso = 'SE';
