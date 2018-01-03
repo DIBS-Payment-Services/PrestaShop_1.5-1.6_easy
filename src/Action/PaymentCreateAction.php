@@ -19,6 +19,7 @@ namespace Invertus\DibsEasy\Action;
 use Cart;
 use Currency;
 use DibsOrderPayment;
+use Invertus\DibsEasy\Adapter\ConfigurationAdapter;
 use Invertus\DibsEasy\Adapter\LinkAdapter;
 use Invertus\DibsEasy\Payment\PaymentCreateRequest;
 use Invertus\DibsEasy\Service\PaymentService;
@@ -52,23 +53,31 @@ class PaymentCreateAction extends AbstractAction
     private $supportedCountries;
 
     /**
+     * @var ConfigurationAdapter
+     */
+    private $configuration;
+
+    /**
      * PaymentCreateAction constructor.
      *
      * @param PaymentService $paymentService
      * @param LinkAdapter $linkAdapter
      * @param Module $module
+     * @param ConfigurationAdapter $configuration
      * @param array $supportedCountries
      */
     public function __construct(
         PaymentService $paymentService,
         LinkAdapter $linkAdapter,
         Module $module,
+        ConfigurationAdapter $configuration,
         array $supportedCountries
     ) {
         $this->paymentService = $paymentService;
         $this->linkAdapter = $linkAdapter;
         $this->module = $module;
         $this->supportedCountries = $supportedCountries;
+        $this->configuration = $configuration;
     }
 
     /**
@@ -87,6 +96,7 @@ class PaymentCreateAction extends AbstractAction
         $createRequest->setCurrency($currency->iso_code);
         $createRequest->setReference($cart->id);
         $createRequest->setUrl($this->linkAdapter->getModuleLink('dibseasy', 'checkout'));
+        $createRequest->setTermsUrl($this->configuration->get('DIBS_TAC_URL'));
         $createRequest->setShippingCountries($this->supportedCountries);
 
         $items = $this->getCartProductItems($cart);

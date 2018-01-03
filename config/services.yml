@@ -95,6 +95,7 @@ services:
             - '@dibs.service.payment'
             - '@dibs.adapter.link'
             - '@dibs.module'
+            - '@dibs.adapter.configuration'
             - '%supported_countries%'
 
     dibs.action.payment_get:

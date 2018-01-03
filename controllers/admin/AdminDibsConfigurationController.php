@@ -17,7 +17,7 @@
 class AdminDibsConfigurationController extends ModuleAdminController
 {
     /****
-     * @var Dibs
+     * @var DibsEasy
      */
     public $module;
 
@@ -84,6 +84,15 @@ class AdminDibsConfigurationController extends ModuleAdminController
                         'class' => 'fixed-width-xxl',
                         'list' => $this->getLangs(),
                         'identifier' => 'id',
+                        'required' => true,
+                    ),
+                    'DIBS_TAC_URL' => array(
+                        'title' => $this->l('Terms & Conditions URL'),
+                        'desc' => $this->l('URL is required'),
+                        'validation' => 'isUrl',
+                        'type' => 'text',
+                        'class' => 'fixed-width-xxl',
+                        'required' => true,
                     ),
                     'DIBS_TEST_MODE' => array(
                         'title' => $this->l('Testing mode'),
