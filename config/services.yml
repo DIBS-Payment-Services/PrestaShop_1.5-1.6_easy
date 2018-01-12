@@ -105,3 +105,6 @@ services:
 
     dibs.util.address_checksum:
         class: 'Invertus\DibsEasy\Util\AddressChecksum'
+
+    dibs.service.country_mapper:
+        class: 'Invertus\DibsEasy\Service\CountryMapper'

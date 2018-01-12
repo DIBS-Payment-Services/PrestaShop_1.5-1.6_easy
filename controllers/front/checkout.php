@@ -357,13 +357,21 @@ class DibsEasyCheckoutModuleFrontController extends ModuleFrontController
      */
     protected function assignDeliveryOptions()
     {
-        $idCountrySweeden = Country::getByIso('SE');
-        $sweeden = new Country($idCountrySweeden);
+        $idCountrySweden = Country::getByIso('SE');
+        $country = new Country($idCountrySweden);
+
+        if ($this->context->cart && $this->context->cart->id_address_delivery) {
+            $deliveryAddress = new Address($this->context->cart->id_address_delivery);
+
+            if ($deliveryAddress->id_country) {
+                $country = new Country($deliveryAddress->id_country);
+            }
+        }
 
         $carriers = $this->context->cart->simulateCarriersOutput(null, true);
         $checked = $this->context->cart->simulateCarrierSelectedOutput(false);
-        $delivery_option_list = $this->context->cart->getDeliveryOptionList($sweeden);
-        $delivery_option = $this->context->cart->getDeliveryOption($sweeden, false);
+        $delivery_option_list = $this->context->cart->getDeliveryOptionList($country);
+        $delivery_option = $this->context->cart->getDeliveryOption($country, false);
 
         if (!$this->context->cart->getDeliveryOption(null, true)) {
             $this->context->cart->setDeliveryOption($this->context->cart->getDeliveryOption());

@@ -275,18 +275,14 @@ class DibsEasyValidationModuleFrontController extends ModuleFrontController
      */
     protected function getAlpha2FromAlpha3CountryIso($alpha3Iso)
     {
+        /** @var \Invertus\DibsEasy\Service\CountryMapper $countryMapper */
+        $countryMapper = $this->module->get('dibs.service.country_mapper');
+        $mappings = $countryMapper->mappings();
+
         $alpha2Iso = null;
 
-        switch ($alpha3Iso) {
-            case 'SWE':
-                $alpha2Iso = 'SE';
-                break;
-            case 'DNK':
-                $alpha2Iso = 'DK';
-                break;
-            case 'NOR':
-                $alpha2Iso = 'NO';
-                break;
+        if (isset($mappings[$alpha3Iso])) {
+            $alpha2Iso = $mappings[$alpha3Iso];
         }
 
         return $alpha2Iso;

@@ -338,18 +338,9 @@ class DibsEasy extends PaymentModule
         $shippingAddress = $payment->getConsumer()->getShippingAddress();
         $person = $payment->getConsumer()->getPrivatePerson();
 
-        switch ($shippingAddress->getCountry()) {
-            case 'DNK':
-                $countryIso = 'DK';
-                break;
-            case 'NOR':
-                $countryIso = 'NO';
-                break;
-            default:
-            case 'SWE':
-                $countryIso = 'SE';
-                break;
-        }
+        /** @var \Invertus\DibsEasy\Service\CountryMapper $countryMapper */
+        $countryMapper = $this->get('dibs.service.country_mapper');
+        $countryIso = $countryMapper->getIso2Code($shippingAddress->getCountry());
 
         $deliveryAddress = new Address();
         $deliveryAddress->alias = $this->l('DIBS EASY Address');

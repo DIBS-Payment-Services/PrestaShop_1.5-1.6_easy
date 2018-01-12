@@ -97,7 +97,6 @@ class PaymentCreateAction extends AbstractAction
         $createRequest->setReference($cart->id);
         $createRequest->setUrl($this->linkAdapter->getModuleLink('dibseasy', 'checkout'));
         $createRequest->setTermsUrl($this->configuration->get('DIBS_TAC_URL'));
-        $createRequest->setShippingCountries($this->supportedCountries);
 
         $items = $this->getCartProductItems($cart);
         $createRequest->setItems($items);
