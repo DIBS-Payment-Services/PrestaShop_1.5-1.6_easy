@@ -104,6 +104,7 @@ class DibsEasyCheckoutModuleFrontController extends ModuleFrontController
                 break;
         }
 
+        $this->context->smarty->assign('DIBS_TEST_MODE', $isTestingModeOn);
         $language = Configuration::get('DIBS_LANGUAGE');
 
         $checkoutUrl = $this->context->link->getModuleLink($this->module->name, 'checkout');

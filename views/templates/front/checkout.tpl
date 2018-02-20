@@ -36,6 +36,11 @@
 
     <div class="col-xs-12 col-sm-12 col-md-7">
         <h1 class="page-heading">{l s='Easy Checkout' mod='dibseasy'}</h1>
+        {if $DIBS_TEST_MODE}
+            <div class="alert alert-warning">
+                {l s='Easy checkout is in Test Mode.' mod='dibseasy'}
+            </div>
+        {/if}
         <div id="dibs-complete-checkout"></div>
     </div>
 </div>
