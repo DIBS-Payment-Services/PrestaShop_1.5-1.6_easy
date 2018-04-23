@@ -424,11 +424,11 @@ class Installer
 
     protected function uninstallDefaultAddresses()
     {
-        $addressConfigs = [
+        $addressConfigs = array(
             'DIBS_SWEEDEN_ADDRESS_ID',
             'DIBS_NORWAY_ADDRESS_ID',
             'DIBS_DENMARK_ADDRESS_ID',
-        ];
+        );
 
         foreach ($addressConfigs as $addressConfig) {
             $idAddress = $this->configurationAdapter->get($addressConfig);
@@ -476,5 +476,4 @@ class Installer
 
         return true;
     }
-
 }

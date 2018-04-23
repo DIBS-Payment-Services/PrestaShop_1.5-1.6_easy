@@ -192,9 +192,9 @@ class PaymentCreateRequest
         );
 
         if (count($this->supportedCountries)) {
-            $orderArray['checkout']['ShippingCountries'] = array_map(function($countryCode) {
-                return ['countryCode' => $countryCode];
-           }, $this->supportedCountries);
+            $orderArray['checkout']['ShippingCountries'] = array_map(function ($countryCode) {
+                return array('countryCode' => $countryCode);
+            }, $this->supportedCountries);
         }
 
         return $orderArray;

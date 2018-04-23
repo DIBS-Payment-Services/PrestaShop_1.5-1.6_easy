@@ -32,9 +32,10 @@ class DibsEasy extends PaymentModule
         $this->name = 'dibseasy';
         $this->author = 'Invertus';
         $this->tab = 'payments_gateways';
-        $this->version = '1.0.6';
+        $this->version = '1.0.7';
         $this->controllers = array('validation', 'checkout');
         $this->compatibility = array('min' => '1.5.6.0', 'max' => '1.6.1.99');
+        $this->module_key = '7aa447652d62fa94766ded6234e74266';
 
         parent::__construct();
 
@@ -469,6 +470,8 @@ class DibsEasy extends PaymentModule
         }
 
         $this->context->smarty->assign($tplVars);
+
+        $params = array();
 
         $params['{dibs_html_block}'] = $this->context->smarty->fetch(
             $this->getLocalPath().'views/templates/hook/actionGetExtraMailTemplateVars.tpl'
