@@ -85,6 +85,13 @@ class AdminDibsConfigurationController extends ModuleAdminController
                         'list' => $this->getLangs(),
                         'identifier' => 'id',
                     ),
+                    'DIBS_CONSUMER_TYPE' => [
+                        'title' => $this->l('Allowed customer types'),
+                        'type' => 'select',
+                        'class' => 'fixed-width-xxl',
+                        'list' => $this->getConsumerTypes(),
+                        'identifier' => 'id',
+                    ],
                     'DIBS_TAC_URL' => array(
                         'title' => $this->l('Terms & Conditions URL'),
                         'desc' => $this->l('URL is required'),
@@ -136,6 +143,34 @@ class AdminDibsConfigurationController extends ModuleAdminController
             array(
                 'id' => 'da-DK',
                 'name' => $this->l('Danish'),
+            ),
+        );
+    }
+
+    /**
+     * Get available consumer types
+     */
+    private function getConsumerTypes()
+    {
+        $b2c = \Invertus\DibsEasy\ValueObject\Consumer::TYPE_B2C;
+        $b2b = \Invertus\DibsEasy\ValueObject\Consumer::TYPE_B2B;
+
+        return array(
+            array(
+                'id' => $b2c,
+                'name' => $this->l('B2C only'),
+            ),
+            array(
+                'id' => $b2b,
+                'name' => $this->l('B2B only'),
+            ),
+            array(
+                'id' => \Invertus\DibsEasy\ValueObject\Consumer::b2cAndB2bWithDefaultB2cType(),
+                'name' => $this->l('B2C & B2B (defaults to B2C)'),
+            ),
+            array(
+                'id' => \Invertus\DibsEasy\ValueObject\Consumer::b2cAndB2bWithDefaultB2cType(),
+                'name' => $this->l('B2B & B2C (defaults to B2B)'),
             ),
         );
     }
