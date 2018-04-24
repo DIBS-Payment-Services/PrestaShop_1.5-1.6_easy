@@ -23,6 +23,7 @@ if (!defined('_PS_VERSION_')) {
  *
  * @return bool
  */
-function upgrade_module_1_1_0($module) {
+function upgrade_module_1_1_0($module)
+{
     return Configuration::updateValue('DIBS_CONSUMER_TYPE', 'B2C');
 }
