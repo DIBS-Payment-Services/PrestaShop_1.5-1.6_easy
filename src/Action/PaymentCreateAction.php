@@ -133,20 +133,20 @@ class PaymentCreateAction extends AbstractAction
 
         switch ($consumerType) {
             case Consumer::b2bAndB2cWithDefaultB2bType():
-                $supportedType = [Consumer::TYPE_B2B, Consumer::TYPE_B2C];
+                $supportedType = array(Consumer::TYPE_B2B, Consumer::TYPE_B2C);
                 $defaultType = Consumer::TYPE_B2B;
                 break;
             case Consumer::b2cAndB2bWithDefaultB2cType():
-                $supportedType = [Consumer::TYPE_B2C, Consumer::TYPE_B2B];
+                $supportedType = array(Consumer::TYPE_B2C, Consumer::TYPE_B2B);
                 $defaultType = Consumer::TYPE_B2C;
                 break;
             case Consumer::TYPE_B2B:
-                $supportedType = [Consumer::TYPE_B2B];
+                $supportedType = array(Consumer::TYPE_B2B);
                 $defaultType = Consumer::TYPE_B2B;
                 break;
             default:
             case Consumer::TYPE_B2C:
-                $supportedType = [Consumer::TYPE_B2C];
+                $supportedType = array(Consumer::TYPE_B2C);
                 $defaultType = Consumer::TYPE_B2C;
                 break;
         }

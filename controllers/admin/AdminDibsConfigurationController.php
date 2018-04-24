@@ -85,13 +85,13 @@ class AdminDibsConfigurationController extends ModuleAdminController
                         'list' => $this->getLangs(),
                         'identifier' => 'id',
                     ),
-                    'DIBS_CONSUMER_TYPE' => [
+                    'DIBS_CONSUMER_TYPE' => array(
                         'title' => $this->l('Allowed customer types'),
                         'type' => 'select',
                         'class' => 'fixed-width-xxl',
                         'list' => $this->getConsumerTypes(),
                         'identifier' => 'id',
-                    ],
+                    ),
                     'DIBS_TAC_URL' => array(
                         'title' => $this->l('Terms & Conditions URL'),
                         'desc' => $this->l('URL is required'),
