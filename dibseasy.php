@@ -59,6 +59,15 @@ class DibsEasy extends PaymentModule
      */
     public function install()
     {
+        if (!version_compare(PHP_VERSION, '5.3.9') >= 0) {
+            $this->context->controller->errors[] = sprintf(
+                $this->l('Minimum PHP version required for %s module is %s'),
+                $this->displayName,
+                '5.3.9'
+            );
+            return false;
+        }
+
         /** @var \Invertus\DibsEasy\Install\Installer $installer */
         $installer = $this->get('dibs.installer');
 
