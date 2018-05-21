@@ -32,7 +32,7 @@ class DibsEasy extends PaymentModule
         $this->name = 'dibseasy';
         $this->author = 'Invertus';
         $this->tab = 'payments_gateways';
-        $this->version = '1.0.7';
+        $this->version = '1.0.8';
         $this->controllers = array('validation', 'checkout');
         $this->compatibility = array('min' => '1.5.6.0', 'max' => '1.6.1.99');
         $this->module_key = '7aa447652d62fa94766ded6234e74266';
@@ -59,6 +59,15 @@ class DibsEasy extends PaymentModule
      */
     public function install()
     {
+        if (version_compare(PHP_VERSION, '5.3.9', '<')) {
+            $this->context->controller->errors[] = sprintf(
+                $this->l('Minimum PHP version required for %s module is %s'),
+                $this->displayName,
+                '5.3.9'
+            );
+            return false;
+        }
+
         /** @var \Invertus\DibsEasy\Install\Installer $installer */
         $installer = $this->get('dibs.installer');
 
