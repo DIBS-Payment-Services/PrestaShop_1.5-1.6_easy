@@ -226,8 +226,10 @@ class PaymentCreateRequest
             'checkout' => array(
                 'url' => $this->getUrl(),
                 'termsUrl' => $this->getTermsUrl(),
-                'supportedConsumerTypes' => $this->getSupportedConsumerTypes(),
-                'defaultConsumerType' => $this->getDefaultConsumerType(),
+                'consumerType' => [
+                    'supportedTypes' => $this->getSupportedConsumerTypes(),
+                    'default' => $this->getDefaultConsumerType(),
+                ],
             ),
         );
 

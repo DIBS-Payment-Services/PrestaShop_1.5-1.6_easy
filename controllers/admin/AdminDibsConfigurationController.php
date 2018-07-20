@@ -169,7 +169,7 @@ class AdminDibsConfigurationController extends ModuleAdminController
                 'name' => $this->l('B2C & B2B (defaults to B2C)'),
             ),
             array(
-                'id' => \Invertus\DibsEasy\ValueObject\Consumer::b2cAndB2bWithDefaultB2cType(),
+                'id' => \Invertus\DibsEasy\ValueObject\Consumer::b2bAndB2cWithDefaultB2bType(),
                 'name' => $this->l('B2B & B2C (defaults to B2B)'),
             ),
         );
