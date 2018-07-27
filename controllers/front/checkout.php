@@ -192,6 +192,10 @@ class DibsEasyCheckoutModuleFrontController extends ModuleFrontController
             $paymentCreateAction = $this->module->get('dibs.action.payment_create');
             $orderPayment = $paymentCreateAction->createPayment($this->context->cart);
 
+            if (false === $orderPayment) {
+                Tools::redirect('index.php?controller=order&step=1');
+            }
+
             $paymentId = $orderPayment->id_payment;
         }
 
