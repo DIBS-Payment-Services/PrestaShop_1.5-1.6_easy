@@ -104,6 +104,7 @@ class DibsEasyCheckoutModuleFrontController extends ModuleFrontController
                 break;
         }
 
+        $this->context->smarty->assign('DIBS_TEST_MODE', $isTestingModeOn);
         $language = Configuration::get('DIBS_LANGUAGE');
 
         $checkoutUrl = $this->context->link->getModuleLink($this->module->name, 'checkout');
@@ -190,6 +191,10 @@ class DibsEasyCheckoutModuleFrontController extends ModuleFrontController
             /** @var \Invertus\DibsEasy\Action\PaymentCreateAction $paymentCreateAction */
             $paymentCreateAction = $this->module->get('dibs.action.payment_create');
             $orderPayment = $paymentCreateAction->createPayment($this->context->cart);
+
+            if (false === $orderPayment) {
+                Tools::redirect('index.php?controller=order&step=1');
+            }
 
             $paymentId = $orderPayment->id_payment;
         }

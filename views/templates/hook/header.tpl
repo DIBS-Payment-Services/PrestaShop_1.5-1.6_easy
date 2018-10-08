@@ -15,6 +15,6 @@
 
 <script>
     var dibsGlobal = {
-        checkoutUrl: "{$dibsGlobal.checkoutUrl|escape:'htmlall':'UTF-8'}"
+        checkoutUrl: "{$dibsGlobal.checkoutUrl|escape:'UTF-8'}"
     };
 </script>
