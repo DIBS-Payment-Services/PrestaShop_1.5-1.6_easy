@@ -127,7 +127,6 @@ $(document).ready(function () {
 
         checkout.on('address-changed', function (address) {
             checkout.freezeCheckout();
-            //console.log(address);return;
 
             $.post(dibsCheckout.addressUrl, {
                 post_code: address.postalCode,

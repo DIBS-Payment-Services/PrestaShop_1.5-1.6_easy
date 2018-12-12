@@ -20,6 +20,8 @@
         language: "{$dibsCheckout.language|escape:'htmlall':'UTF-8'}",
         validationUrl: "{$dibsCheckout.validationUrl|escape:'htmlall':'UTF-8'}",
         checkoutUrl: "{$dibsCheckout.checkoutUrl|escape:'htmlall':'UTF-8'}",
+        refreshUrl: "{$dibsCheckout.refreshUrl|escape:'htmlall':'UTF-8'}",
+        addressUrl: "{$dibsCheckout.addressUrl|escape:'htmlall':'UTF-8'}",
         actions: {
             changeDeliveryOption: "{$dibsCheckout.actions.changeDeliveryOption|escape:'htmlall':'UTF-8'}",
             addDiscount: "{$dibsCheckout.actions.addDiscount|escape:'htmlall':'UTF-8'}"
