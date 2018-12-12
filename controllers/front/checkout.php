@@ -328,7 +328,6 @@ class DibsEasyCheckoutModuleFrontController extends ModuleFrontController
             $orderPayment->delete();
         }
 
-
         if (Tools::isSubmit('paymentId')) {
             $paymentId = Tools::getValue('paymentId');
 
