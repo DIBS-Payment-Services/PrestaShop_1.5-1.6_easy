@@ -124,6 +124,25 @@ $(document).ready(function () {
         checkout.on('payment-completed', function () {
             window.location = dibsCheckout.validationUrl;
         });
+
+        checkout.on('address-changed', function (address) {
+            checkout.freezeCheckout();
+            //console.log(address);return;
+
+            $.post(dibsCheckout.addressUrl, {
+                post_code: address.postalCode,
+                country_code: address.countryCode
+            }, function (response) {
+                var res = JSON.parse(response);
+
+                if (res.success && res.need_reload) {
+                    window.location = dibsCheckout.refreshUrl;
+                    return;
+                }
+
+                checkout.thawCheckout();
+            });
+        });
     }
 
     //  -----------------------------------------------------------------------------------------

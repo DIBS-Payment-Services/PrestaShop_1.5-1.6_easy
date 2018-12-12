@@ -107,4 +107,29 @@ class ApiRequest
 
         return $apiResponse;
     }
+
+    /**
+     * @param string $url
+     * @param array|string $params
+     *
+     * @return ApiResponse
+     */
+    public function put($url, $params = [])
+    {
+        $apiResponse = new ApiResponse();
+
+        try {
+            $request = $this->client->put($url, array(), $params);
+            $response = $request->send();
+
+            $body = $response->getBody()->__toString();
+            $body = $this->toolsAdapter->jsonDecode($body);
+
+            $apiResponse->setStatusCode($response->getStatusCode());
+            $apiResponse->setBody(is_array($body) ? $body : array());
+        } catch (Exception $e) {
+        }
+
+        return $apiResponse;
+    }
 }

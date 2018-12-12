@@ -65,7 +65,7 @@ class ClientFactory
     {
         $isTestModeOn = (bool) $this->configurationAdapter->get('DIBS_TEST_MODE');
         $baseUrl = $isTestModeOn ? $this->testUrl : $this->prodUrl;
-        $auhorizationKey = $isTestModeOn ?
+        $authorizationKey = $isTestModeOn ?
             $this->configurationAdapter->get('DIBS_TEST_SECRET_KEY') :
             $this->configurationAdapter->get('DIBS_PROD_SECRET_KEY');
 
@@ -74,7 +74,7 @@ class ClientFactory
                 'headers' => array(
                     'Content-Type' => 'application/json',
                     'Accept' => 'application/json',
-                    'Authorization' => $auhorizationKey,
+                    'Authorization' => $authorizationKey,
                     'commercePlatformTag' => 'PSEasy',
                 ),
             ),

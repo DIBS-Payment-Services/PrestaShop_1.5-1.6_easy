@@ -76,6 +76,14 @@ class PaymentCreateRequest
     }
 
     /**
+     * @param string $country 3-letter country code
+     */
+    public function addShippingCountry($country)
+    {
+        $this->supportedCountries[] = $country;
+    }
+
+    /**
      * @return PaymentItem[]
      */
     public function getItems()

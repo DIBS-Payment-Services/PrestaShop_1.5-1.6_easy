@@ -81,6 +81,12 @@ class DibsEasyCheckoutModuleFrontController extends ModuleFrontController
             Tools::redirect('index.php?controller=order&step=1');
         }
 
+        // if there are no supported countries
+        // then redirect to default checkout
+        if (!$this->module->get('dibs.service.default_shipping_country_provider')->anyAvailableCountries()) {
+            Tools::redirect('index.php?controller=order&step=1');
+        }
+
         return true;
     }
 
@@ -116,6 +122,10 @@ class DibsEasyCheckoutModuleFrontController extends ModuleFrontController
         $this->jsVariables['dibsCheckout']['checkoutUrl'] = $checkoutUrl;
         $this->jsVariables['dibsCheckout']['actions']['changeDeliveryOption'] = self::CHANGE_DELIVERY_OPTION_ACTION;
         $this->jsVariables['dibsCheckout']['actions']['addDiscount'] = self::ADD_DISCOUNT_ACTION;
+        $this->jsVariables['dibsCheckout']['addressUrl'] = $this->context->link->getModuleLink(
+            $this->module->name,
+            'address'
+        );
 
         $this->addJqueryPlugin('fancybox');
         $this->context->controller->addCSS($this->module->getPathUri().'views/css/checkout.css');
@@ -131,23 +141,8 @@ class DibsEasyCheckoutModuleFrontController extends ModuleFrontController
         CartRule::autoRemoveFromCart($this->context);
         CartRule::autoAddToCart($this->context);
 
-        if (!$this->context->cart->id_address_delivery) {
-            $this->context->cart->id_address_delivery = $this->getDeliveryAddressId();
-            $this->context->cart->save();
-        }
-
-        if (!$this->context->cart->id_carrier) {
-            $idCarrierDefault = (int) Configuration::get('PS_CARRIER_DEFAULT');
-            $this->context->cart->id_carrier = $idCarrierDefault;
-            $this->context->cart->save();
-        }
-
-        /** @var \Invertus\DibsEasy\Repository\OrderPaymentRepository $orderPaymentRepository */
-        $orderPaymentRepository = $this->module->get('dibs.repository.order_payment');
-        $orderPayment = $orderPaymentRepository->findOrderPaymentByCartId($this->context->cart->id);
-        if ($orderPayment) {
-            $orderPayment->delete();
-        }
+        $this->assignAddressToCart();
+        $this->assignCarrierToCart();
 
         $action = Tools::getValue('action');
 
@@ -160,46 +155,16 @@ class DibsEasyCheckoutModuleFrontController extends ModuleFrontController
                 break;
         }
 
-        if (Tools::isSubmit('paymentId')) {
-            $paymentId = Tools::getValue('paymentId');
+        $orderPayment = $this->getOrderPayment();
 
-            /** @var \Invertus\DibsEasy\Action\PaymentGetAction $paymentGetAction */
-            $paymentGetAction = $this->module->get('dibs.action.payment_get');
-            $payment = $paymentGetAction->getPayment($paymentId);
-
-            $paymentAmountInCents = $payment->getOrderDetail()->getAmount();
-            $cartAmountInCents = (int) (string) ($this->context->cart->getOrderTotal() * 100);
-
-            $paymentCurrency = $payment->getOrderDetail()->getCurrency();
-            $cartCurrency = new Currency($this->context->cart->id_currency);
-
-            if ($paymentAmountInCents == $cartAmountInCents && $cartCurrency->iso_code == $paymentCurrency) {
-                $this->context->cookie->dibs_payment_id = $paymentId;
-                Tools::redirect($this->context->link->getModuleLink($this->module->name, 'checkout'));
-            }
-        }
-
-        if (isset($this->context->cookie->dibs_payment_id)) {
-            $paymentId = $this->context->cookie->dibs_payment_id;
-            unset($this->context->cookie->dibs_payment_id);
-
-            $orderPayment = new DibsOrderPayment();
-            $orderPayment->id_payment = $paymentId;
-            $orderPayment->id_cart = $this->context->cart->id;
-            $orderPayment->save();
-        } else {
-            /** @var \Invertus\DibsEasy\Action\PaymentCreateAction $paymentCreateAction */
-            $paymentCreateAction = $this->module->get('dibs.action.payment_create');
-            $orderPayment = $paymentCreateAction->createPayment($this->context->cart);
-
-            if (false === $orderPayment) {
-                Tools::redirect('index.php?controller=order&step=1');
-            }
-
-            $paymentId = $orderPayment->id_payment;
-        }
-
-        $this->jsVariables['dibsCheckout']['paymentID'] = $paymentId;
+        $this->jsVariables['dibsCheckout']['paymentID'] = $orderPayment->id_payment;
+        $this->jsVariables['dibsCheckout']['refreshUrl'] = $this->context->link->getModuleLink(
+            $this->module->name,
+            'checkout',
+            [
+                'paymentId' => $orderPayment->id_payment,
+            ]
+        );
     }
 
     /**
@@ -352,6 +317,155 @@ class DibsEasyCheckoutModuleFrontController extends ModuleFrontController
         }
 
         return (int) $idAddress;
+    }
+
+    protected function getOrderPayment()
+    {
+        /** @var \Invertus\DibsEasy\Repository\OrderPaymentRepository $orderPaymentRepository */
+        $orderPaymentRepository = $this->module->get('dibs.repository.order_payment');
+        $orderPayment = $orderPaymentRepository->findOrderPaymentByCartId($this->context->cart->id);
+        if ($orderPayment) {
+            $orderPayment->delete();
+        }
+
+
+        if (Tools::isSubmit('paymentId')) {
+            $paymentId = Tools::getValue('paymentId');
+
+            /** @var \Invertus\DibsEasy\Action\PaymentGetAction $paymentGetAction */
+            $paymentGetAction = $this->module->get('dibs.action.payment_get');
+            $payment = $paymentGetAction->getPayment($paymentId);
+
+            if (null === $payment) {
+                Tools::redirect($this->context->link->getModuleLink($this->module->name, 'checkout'));
+            }
+
+            $paymentAmountInCents = $payment->getOrderDetail()->getAmount();
+            $cartAmountInCents = \Invertus\DibsEasy\Service\PriceToCentsConverter::convert(
+                $this->context->cart->getOrderTotal()
+            );
+
+            $paymentCurrency = $payment->getOrderDetail()->getCurrency();
+            $cartCurrency = new Currency($this->context->cart->id_currency);
+
+            if ($cartCurrency->iso_code !== $paymentCurrency) {
+                // If payment currency has changed
+                // Then skip and redirect to checkout without payment id
+                // To create new payment with valid details
+                Tools::redirect($this->context->link->getModuleLink($this->module->name, 'checkout'));
+            }
+
+            if ($paymentAmountInCents !== $cartAmountInCents) {
+                // If payment id is in url
+                // and cart amount does not equal payment amount
+                // then it means shipping cost has (probably) changed
+                // so we attempt to update payment items.
+                /** @var \Invertus\DibsEasy\Action\PaymentUpdateCartItemsAction $updateCartItemsAction */
+                $updateCartItemsAction = $this->module->get('dibs.action.payment_update_items');
+                $hasUpdated = $updateCartItemsAction->updatePaymentItems(
+                    $paymentId,
+                    $this->context->cart
+                );
+                if (!$hasUpdated) {
+                    // if update failed
+                    // then redirect to checkout without payment id
+                    // to initialize new payment
+                    Tools::redirect($this->context->link->getModuleLink($this->module->name, 'checkout'));
+                }
+            }
+
+            $orderPayment = new DibsOrderPayment();
+            $orderPayment->id_payment = $paymentId;
+            $orderPayment->id_cart = $this->context->cart->id;
+
+            if ($orderPayment->save()) {
+                // update checkout url in JS variable to have paymentId
+                $this->jsVariables['dibsCheckout']['checkoutUrl'] = $this->context->link->getModuleLink(
+                    $this->module->name,
+                    'checkout',
+                    [
+                        'paymentId' => $paymentId,
+                    ]
+                );
+
+                return $orderPayment;
+            }
+        }
+
+        /** @var \Invertus\DibsEasy\Action\PaymentCreateAction $paymentCreateAction */
+        $paymentCreateAction = $this->module->get('dibs.action.payment_create');
+        $orderPayment = $paymentCreateAction->createPayment($this->context->cart);
+
+        if (false === $orderPayment) {
+            Tools::redirect('index.php?controller=order&step=1');
+        }
+
+        return $orderPayment;
+    }
+
+    /**
+     * Assigns carrier to cart, so it always exists
+     */
+    protected function assignCarrierToCart()
+    {
+        $carrier = new Carrier($this->context->cart->id_carrier);
+
+        if (Validate::isLoadedObject($carrier)) {
+            // if carrier is not deleted
+            // then it's okay to use it
+            if (!$carrier->deleted) {
+                return;
+            }
+
+            if ($carrier->active) {
+                // if carrier is deleted, lets try using updated carrier
+                $carrier = Carrier::getCarrierByReference($carrier->id_reference);
+
+                // if updated carrier exists
+                // then update cart data and use it
+                if (false !== $carrier) {
+                    $option = [$this->context->cart->id_address_delivery => $carrier->id.','];
+                    $this->context->cart->setDeliveryOption($option);
+                    $this->context->cart->update();
+
+                    return;
+                }
+            }
+        }
+
+        // in case carrier was deleted or not set yet
+        // let use first carrier available
+        $address = new Address($this->context->cart->id_address_delivery);
+        $deliveryOptions = $this->context->cart->getDeliveryOptionList(new Country($address->id_country));
+
+        if (isset($deliveryOptions[$address->id]) &&
+            is_array($deliveryOptions[$address->id])
+        ) {
+            reset($deliveryOptions[$address->id]);
+            $carrierIdWithComma = key($deliveryOptions[$address->id]);
+            $option = [$this->context->cart->id_address_delivery => $carrierIdWithComma];
+            $this->context->cart->setDeliveryOption($option);
+            $this->context->cart->update();
+            return;
+        }
+
+        // last but not least
+        // fallback to default carrier
+        $idCarrierDefault = (int) Configuration::get('PS_CARRIER_DEFAULT');
+        $option = [$this->context->cart->id_address_delivery => $idCarrierDefault.','];
+        $this->context->cart->setDeliveryOption($option);
+        $this->context->cart->update();
+    }
+
+    /**
+     * Assign customer's address to cart
+     */
+    private function assignAddressToCart()
+    {
+        if (!$this->context->cart->id_address_delivery) {
+            $this->context->cart->id_address_delivery = $this->getDeliveryAddressId();
+            $this->context->cart->save();
+        }
     }
 
     /**
