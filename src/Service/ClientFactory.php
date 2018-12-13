@@ -75,7 +75,7 @@ class ClientFactory
                     'Content-Type' => 'application/json',
                     'Accept' => 'application/json',
                     'Authorization' => $authorizationKey,
-                    'commercePlatformTag' => 'PSEasy',
+                    'commercePlatformTag' => 'PSEasy1516',
                 ),
             ),
         );
