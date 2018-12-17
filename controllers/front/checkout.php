@@ -161,9 +161,9 @@ class DibsEasyCheckoutModuleFrontController extends ModuleFrontController
         $this->jsVariables['dibsCheckout']['refreshUrl'] = $this->context->link->getModuleLink(
             $this->module->name,
             'checkout',
-            [
+            array(
                 'paymentId' => $orderPayment->id_payment,
-            ]
+            )
         );
     }
 
@@ -382,9 +382,9 @@ class DibsEasyCheckoutModuleFrontController extends ModuleFrontController
                 $this->jsVariables['dibsCheckout']['checkoutUrl'] = $this->context->link->getModuleLink(
                     $this->module->name,
                     'checkout',
-                    [
+                    array(
                         'paymentId' => $paymentId,
-                    ]
+                    )
                 );
 
                 return $orderPayment;
@@ -423,7 +423,7 @@ class DibsEasyCheckoutModuleFrontController extends ModuleFrontController
                 // if updated carrier exists
                 // then update cart data and use it
                 if (false !== $carrier) {
-                    $option = [$this->context->cart->id_address_delivery => $carrier->id.','];
+                    $option = array($this->context->cart->id_address_delivery => $carrier->id.',');
                     $this->context->cart->setDeliveryOption($option);
                     $this->context->cart->update();
 
@@ -442,7 +442,7 @@ class DibsEasyCheckoutModuleFrontController extends ModuleFrontController
         ) {
             reset($deliveryOptions[$address->id]);
             $carrierIdWithComma = key($deliveryOptions[$address->id]);
-            $option = [$this->context->cart->id_address_delivery => $carrierIdWithComma];
+            $option = array($this->context->cart->id_address_delivery => $carrierIdWithComma);
             $this->context->cart->setDeliveryOption($option);
             $this->context->cart->update();
             return;
@@ -451,7 +451,7 @@ class DibsEasyCheckoutModuleFrontController extends ModuleFrontController
         // last but not least
         // fallback to default carrier
         $idCarrierDefault = (int) Configuration::get('PS_CARRIER_DEFAULT');
-        $option = [$this->context->cart->id_address_delivery => $idCarrierDefault.','];
+        $option = array($this->context->cart->id_address_delivery => $idCarrierDefault.',');
         $this->context->cart->setDeliveryOption($option);
         $this->context->cart->update();
     }

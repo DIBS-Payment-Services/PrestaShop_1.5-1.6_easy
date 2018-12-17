@@ -13,6 +13,7 @@
  *
  * International Registered Trademark & Property of INVERTUS, UAB
  */
+
 namespace Invertus\DibsEasy\Result;
 
 class Company

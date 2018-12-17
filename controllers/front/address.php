@@ -35,25 +35,25 @@ class DibsEasyAddressModuleFrontController extends ModuleFrontController
         // If guest checkout is enabled and customer is not logged in, then redirect to standard checkout
         $guestCheckoutEnabled = (bool) Configuration::get('PS_GUEST_CHECKOUT_ENABLED');
         if (!$guestCheckoutEnabled && !$this->context->customer->isLogged()) {
-            $this->json([
+            $this->json(array(
                 'error' => true,
-            ]);
+            ));
         }
 
         // General checks
         if (!$this->module->active ||
             !$this->module->isConfigured()
         ) {
-            $this->json([
+            $this->json(array(
                 'error' => true,
-            ]);
+            ));
         }
 
         // If cart is not initialized or cart is empty redirect to default cart page
         if (!isset($this->context->cart) || $this->context->cart->nbProducts() <= 0) {
-            $this->json([
+            $this->json(array(
                 'error' => true,
-            ]);
+            ));
         }
 
         $currency = new Currency($this->context->cart->id_currency);
@@ -61,9 +61,9 @@ class DibsEasyAddressModuleFrontController extends ModuleFrontController
 
         // If currency is not supported then redirect to default checkout
         if (!in_array($currency->iso_code, $supportedCurrencies)) {
-            $this->json([
+            $this->json(array(
                 'error' => true,
-            ]);
+            ));
         }
 
         return true;
@@ -75,9 +75,9 @@ class DibsEasyAddressModuleFrontController extends ModuleFrontController
         $countryAlpha3Code = Tools::getValue('country_code');
 
         if (!$postCode || !$countryAlpha3Code) {
-            $this->json([
+            $this->json(array(
                 'error' => true,
-            ]);
+            ));
         }
 
         /** @var \Invertus\DibsEasy\Service\CountryMapper $countryMapper */
@@ -92,10 +92,10 @@ class DibsEasyAddressModuleFrontController extends ModuleFrontController
         if ($deliveryAddress->postcode === $postCode &&
             $deliveryCountry->iso_code === $countryAlpha2Code
         ) {
-            $this->json([
+            $this->json(array(
                 'success' => true,
                 'need_reload' => false,
-            ]);
+            ));
         }
 
         // if cart had temporary shipping address assigned to it
@@ -120,10 +120,10 @@ class DibsEasyAddressModuleFrontController extends ModuleFrontController
         $this->context->cart->id_address_delivery = $deliveryAddress->id;
         $this->context->cart->update();
 
-        $this->json([
+        $this->json(array(
             'success' => true,
             'need_reload' => true,
-        ]);
+        ));
     }
 
     public function json(array $data)
@@ -133,11 +133,11 @@ class DibsEasyAddressModuleFrontController extends ModuleFrontController
 
     private function isOneOfDefaultShippingAddresses($addressId)
     {
-        $defaultShippingAddresses = [
+        $defaultShippingAddresses = array(
             (int) Configuration::get('DIBS_SWEEDEN_ADDRESS_ID'),
             (int) Configuration::get('DIBS_NORWAY_ADDRESS_ID'),
             (int) Configuration::get('DIBS_DENMARK_ADDRESS_ID'),
-        ];
+        );
 
         return in_array((int) $addressId, $defaultShippingAddresses);
     }

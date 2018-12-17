@@ -114,7 +114,7 @@ class ApiRequest
      *
      * @return ApiResponse
      */
-    public function put($url, $params = [])
+    public function put($url, $params = array())
     {
         $apiResponse = new ApiResponse();
 

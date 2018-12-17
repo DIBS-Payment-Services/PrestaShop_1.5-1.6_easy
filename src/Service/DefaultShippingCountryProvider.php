@@ -48,7 +48,7 @@ class DefaultShippingCountryProvider
             $context->shop->id,
             $context->language->id
         );
-        $activeCountries = [];
+        $activeCountries = array();
 
         foreach ($countries as $country) {
             if ($country['active']) {
@@ -67,16 +67,16 @@ class DefaultShippingCountryProvider
             return $activeCountries;
         }
 
-        $formattedCountries = [];
+        $formattedCountries = array();
 
         foreach ($availableCountries as $countryId => $isoCode) {
-            $formattedCountries[] = [
+            $formattedCountries[] = array(
                 'id' => $countryId,
                 'name' => Country::getNameById(
                     $context->language->id,
                     $countryId
                 ),
-            ];
+            );
         }
 
         return $formattedCountries;

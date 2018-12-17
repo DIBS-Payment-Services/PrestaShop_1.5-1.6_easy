@@ -84,14 +84,14 @@ class PaymentUpdateCartItemsRequest
      */
     public function toArray()
     {
-        return [
+        return array(
             'amount' => $this->amountTotal,
             'items' => array_map(function (PaymentItem $item) {
                 return $item->toArray();
             }, $this->paymentItems),
-            'shipping' => [
+            'shipping' => array(
                 'costSpecified' => true,
-            ],
-        ];
+            ),
+        );
     }
 }
