@@ -21,6 +21,7 @@ use Guzzle\Http\ClientInterface;
 use Guzzle\Http\Exception\ServerErrorResponseException;
 use Guzzle\Stream\StreamInterface;
 use Invertus\DibsEasy\Adapter\ToolsAdapter;
+use Guzzle\Http\Exception\ClientErrorResponseException;
 
 /**
  * Class ApiService
@@ -102,7 +103,10 @@ class ApiRequest
         } catch (ServerErrorResponseException $e) {
             $response = $e->getResponse();
             $apiResponse->setStatusCode($response->getStatusCode());
-        } catch (Exception $e) {
+        } catch ( ClientErrorResponseException $exceptionClient ) {
+
+        } catch ( Exception $ex) {
+
         }
 
         return $apiResponse;

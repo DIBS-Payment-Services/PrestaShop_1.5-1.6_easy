@@ -114,7 +114,7 @@ class DibsEasyCheckoutModuleFrontController extends ModuleFrontController
         $language = Configuration::get('DIBS_LANGUAGE');
 
         $checkoutUrl = $this->context->link->getModuleLink($this->module->name, 'checkout');
-        $validationUrl = $this->context->link->getModuleLink($this->module->name, 'validation');
+        $validationUrl = $this->context->link->getModuleLink($this->module->name, 'validation' , array('id' => $this->context->cart->id));
 
         $this->jsVariables['dibsCheckout']['checkoutKey'] = $checkoutKey;
         $this->jsVariables['dibsCheckout']['language'] = $language;
@@ -156,15 +156,8 @@ class DibsEasyCheckoutModuleFrontController extends ModuleFrontController
         }
 
         $orderPayment = $this->getOrderPayment();
-
         $this->jsVariables['dibsCheckout']['paymentID'] = $orderPayment->id_payment;
-        $this->jsVariables['dibsCheckout']['refreshUrl'] = $this->context->link->getModuleLink(
-            $this->module->name,
-            'checkout',
-            array(
-                'paymentId' => $orderPayment->id_payment,
-            )
-        );
+
     }
 
     /**

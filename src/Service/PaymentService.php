@@ -96,7 +96,6 @@ class PaymentService
     public function createPayment(PaymentCreateRequest $paymentCreateRequest)
     {
         $params = $paymentCreateRequest->toArray();
-
         $body = $this->toolsAdapter->jsonEncode($params);
         $response = $this->apiRequest->post('/v1/payments', $body);
 

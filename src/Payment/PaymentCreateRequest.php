@@ -49,6 +49,11 @@ class PaymentCreateRequest
     private $url;
 
     /**
+     * @var string Notification url
+     */
+    private $notificationUrl;
+
+    /**
      * @var string Terms & Conditions URL
      */
     private $termsUrl;
@@ -175,6 +180,20 @@ class PaymentCreateRequest
     /**
      * @return string
      */
+    public function getNotificationUrl() {
+        return $this->notificationUrl;
+    }
+
+    /**
+     * @param string $url
+     */
+    public function setNotificationUrl($url) {
+        $this->notificationUrl = $url;
+    }
+
+    /**
+     * @return string
+     */
     public function getTermsUrl()
     {
         return $this->termsUrl;
@@ -238,6 +257,12 @@ class PaymentCreateRequest
                     'supportedTypes' => $this->getSupportedConsumerTypes(),
                     'default' => $this->getDefaultConsumerType(),
                 ),
+            ),
+            'notifications' => array(
+                'webhooks' => array(
+                    array('eventName' => "payment.checkout.completed",
+                          'url' => $this->getNotificationUrl(),
+                          'authorization' => "389nd384rfh348rh3434r34t")),
             ),
         );
 

@@ -97,9 +97,11 @@ class PaymentCreateAction extends AbstractAction
 
         $createRequest = new PaymentCreateRequest();
         $createRequest->setAmount($cart->getOrderTotal());
+
         $createRequest->setCurrency($currency->iso_code);
         $createRequest->setReference($cart->id);
         $createRequest->setUrl($this->linkAdapter->getModuleLink('dibseasy', 'checkout'));
+        $createRequest->setNotificationUrl($this->linkAdapter->getModuleLink('dibseasy', 'notification'));
         $createRequest->setTermsUrl($this->configuration->get('DIBS_TAC_URL'));
 
         $this->addShippingCountryRestrictions($createRequest);
@@ -107,6 +109,7 @@ class PaymentCreateAction extends AbstractAction
         $this->addConsumerData($createRequest);
 
         $items = $this->getCartProductItems($cart);
+
         $createRequest->setItems($items);
 
         $additionalItems = $this->getCartAdditionalItems($cart);
