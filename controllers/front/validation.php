@@ -31,14 +31,22 @@ class DibsEasyValidationModuleFrontController extends ModuleFrontController
      */
     public function checkAccess()
     {
+
         $cart = new Cart(Tools::getValue('id'));
 
         // if order was placed with
         // webhook we redirect to place order success page
 
         if($cart->orderExists()) {
+
             $id_order = Order::getOrderByCartId((int)$cart->id);
             $order = new Order($id_order );
+
+            if(!$this->context->customer->id) {
+                $customer = new Customer($order->getCustomer()->id);
+                $this->module->processLogin($customer);
+            }
+
             $orderConfirmationUrl = $this->context->link->getPageLink(
                 'order-confirmation',
                 true,
@@ -50,6 +58,7 @@ class DibsEasyValidationModuleFrontController extends ModuleFrontController
                     'key' => $order->getCustomer()->secure_key,
                 )
             );
+
             Tools::redirect($orderConfirmationUrl);
         }
 
@@ -62,7 +71,6 @@ class DibsEasyValidationModuleFrontController extends ModuleFrontController
             $cart->orderExists()
         ) {
             $this->cancelCartPayment();
-
             Tools::redirect('index.php?controller=order&step=1');
         }
 

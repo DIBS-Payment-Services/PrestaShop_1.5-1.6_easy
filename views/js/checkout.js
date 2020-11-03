@@ -134,10 +134,10 @@ $(document).ready(function () {
             }, function (response) {
                 var res = JSON.parse(response);
 
-                if (res.success && res.need_reload) {
+                /*if (res.success && res.need_reload) {
                     window.location = dibsCheckout.refreshUrl;
                     return;
-                }
+                }*/
 
                 checkout.thawCheckout();
             });

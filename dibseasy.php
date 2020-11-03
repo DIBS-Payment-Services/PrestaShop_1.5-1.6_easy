@@ -37,7 +37,7 @@ class DibsEasy extends PaymentModule
         $this->name = 'dibseasy';
         $this->author = 'Invertus';
         $this->tab = 'payments_gateways';
-        $this->version = '1.1.1';
+        $this->version = '1.2.0';
         $this->controllers = array('validation', 'checkout');
         $this->compatibility = array('min' => '1.5.6.0', 'max' => '1.6.1.99');
         $this->module_key = '7aa447652d62fa94766ded6234e74266';
@@ -570,11 +570,13 @@ class DibsEasy extends PaymentModule
 
        // If validations passed, let do some processing before creating order
         // First assign customer to cart if it does not exist
-        if (!$this->processSaveCartCustomer($payment)) {
+
+        if (!$customerId = $this->processSaveCartCustomer($payment)) {
             $this->cancelCartPayment($idCart);
             throw new Exception(implode('. ', $this->errors));
         }
 
+        $customer = new Customer($customerId);
         // After processing is done, let's create order
         try {
             $idOrderState = (int) Configuration::get('DIBS_ACCEPTED_ORDER_STATE_ID');
@@ -594,12 +596,12 @@ class DibsEasy extends PaymentModule
                 $extraTplVars,
                 $this->context->currency->id,
                 false,
-                $cart->secure_key
+                $customer->secure_key
             );
 
         } catch (Exception $e) {
             /** @var \Invertus\DibsEasy\Action\PaymentCancelAction $paymentCancelAction */
-            $paymentCancelAction = $this->module->get('dibs.action.payment_cancel');
+            $paymentCancelAction = $this->get('dibs.action.payment_cancel');
             $paymentCancelAction->cancelCartPayment($cart);
             throw new Exception($this->l('Payment was canceled due to order creation failure.', self::FILENAME));
         }
@@ -632,13 +634,19 @@ class DibsEasy extends PaymentModule
             return false;
         }
 
-        $cartCurrency = new Currency($this->context->cart->id_currency);
-        $cartAmount = (int) (string) ($this->context->cart->getOrderTotal() * 100);
+        $cartId = $payment->getOrderDetail()->getReference();
+
+        $cart = new Cart($cartId);
+
+        $cartCurrency = new Currency($cart->id_currency);
+        $cartAmount = (int) (string) ($cart->getOrderTotal() * 100);
 
         $summary = $payment->getSummary();
         $orderDetail = $payment->getOrderDetail();
 
-        if ($summary->getReservedAmount() != $cartAmount ||
+        // check if payment was reserved or charged
+        if ($summary->getReservedAmount() != $cartAmount &&
+            $summary->getChargedAmount() != $cartAmount ||
             $orderDetail->getCurrency() != $cartCurrency->iso_code
         ) {
             return false;
@@ -694,60 +702,88 @@ class DibsEasy extends PaymentModule
      */
     protected function processSaveCartCustomer(\Invertus\DibsEasy\Result\Payment $payment)
     {
-        $customer = new Customer($this->context->cart->id_customer);
-        if (Validate::isLoadedObject($customer)) {
-            return true;
-        }
+        $cartId = $payment->getOrderDetail()->getReference();
+        $cart = new Cart($cartId);
 
-        $person = $payment->getConsumer()->getPrivatePerson();
+        // customer has already been assigned to cart
+        if($cart->id_customer) {
+            return $cart->id_customer;
+        } else { // customer is not assigned it is new customer or non logged in customer
 
-        $company = $payment->getConsumer()->getCompany();
-        $firstName = $person->getFirstName() ?: $company->getFirstName();
-        $lastName = $person->getLastName() ?: $company->getLastName();
-        $email = $person->getEmail() ?: $company->getEmail();
+            // trying to find the customer if it is already exists
 
-        $idCustomer = Customer::customerExists($email, true, false);
+            $person = $payment->getConsumer()->getPrivatePerson();
 
-        if (!$idCustomer) {
+            $company = $payment->getConsumer()->getCompany();
+            $firstName = $person->getFirstName() ?: $company->getFirstName();
+            $lastName = $person->getLastName() ?: $company->getLastName();
+            $email = $person->getEmail() ?: $company->getEmail();
 
-            $newPassword = Tools::passwdGen();
+            $idCustomer = Customer::customerExists($email, true, false);
 
-            $customer = new Customer();
-            $customer->firstname = $firstName;
-            $customer->lastname = $lastName;
-            $customer->email = $email;
-            $customer->passwd = Tools::encrypt($newPassword);
-            $customer->is_guest = 0;
-            $customer->id_default_group = Configuration::get('PS_CUSTOMER_GROUP', null, $this->context->cart->id_shop);
-            $customer->newsletter = 0;
-            $customer->optin = 0;
-            $customer->active = 1;
-            $customer->id_gender = 9;
+            // if customer exists assign the cart to that customer
+            if($idCustomer) {
+                $customer = new Customer($idCustomer);
 
-            if ($errors = $customer->validateController()) {
-                $this->errors = array_merge($this->errors, $errors);
-                return false;
+                // login this customer to show proper success page
+                $this->processLogin($customer);
+
+                $cart->id_customer = $customer->id;
+                $cart->secure_key = $customer->secure_key;
+
+                if (!$cart->save()) {
+                    $this->errors[] = $this->module->l(
+                        'Payment was canceled, because customer account could not be saved.',
+                        self::FILENAME
+                    );
+
+                    return false;
+                } else {
+                    return $idCustomer;
+                }
             }
 
-            $customer->save();
+            // if we couldn't find the customer lets create a new customer
+            if (!$idCustomer) {
+                $newPassword = Tools::passwdGen();
+                $customer = new Customer();
+                $customer->firstname = $firstName;
+                $customer->lastname = $lastName;
+                $customer->email = $email;
+                $customer->passwd = Tools::encrypt($newPassword);
+                $customer->is_guest = 1;
+                $customer->id_default_group = Configuration::get('PS_CUSTOMER_GROUP', null, $this->context->cart->id_shop);
+                $customer->newsletter = 0;
+                $customer->optin = 0;
+                $customer->active = 1;
+                $customer->id_gender = 9;
 
-            $this->sendConfirmationEmail($customer, $newPassword);
+                if ($errors = $customer->validateController()) {
+                    $this->errors = array_merge($this->errors, $errors);
+                    return false;
+                }
 
-            $this->processLogin($customer);
+                $customer->save();
 
-            $this->context->cart->id_customer = $customer->id;
-            $this->context->cart->secure_key = $customer->secure_key;
+                $this->sendConfirmationEmail($customer, $newPassword);
 
-            if (!$this->context->cart->save()) {
-                $this->errors[] = $this->module->l(
-                    'Payment was canceled, because customer account could not be saved.',
-                    self::FILENAME
-                );
+                $this->processLogin($customer);
 
-                return false;
+                $cart->id_customer = $customer->id;
+                $cart->secure_key = $customer->secure_key;
+
+                if (!$cart->save()) {
+                    $this->errors[] = $this->module->l(
+                        'Payment was canceled, because customer account could not be saved.',
+                        self::FILENAME
+                    );
+
+                    return false;
+                }
             }
         }
-        return true;
+
+        return $customer->id;
     }
 
     /**
@@ -784,7 +820,7 @@ class DibsEasy extends PaymentModule
      *
      * @param Customer $customer
      */
-    protected function processLogin(Customer $customer)
+    public function processLogin(Customer $customer)
     {
         $this->context->cookie->id_compare = isset($this->context->cookie->id_compare) ?
             $this->context->cookie->id_compare :

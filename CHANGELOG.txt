@@ -4,3 +4,8 @@ All notable changes to this project will be documented in this file.
 ## [1.1.1] - 2018-12-04
 ### Added
 - Platform tracking header to API calls
+
+## [1.2.0] - 2020-11-03
+### Added
+- handling of logged/non logged in customers,
+  check for reserverd/charged amount

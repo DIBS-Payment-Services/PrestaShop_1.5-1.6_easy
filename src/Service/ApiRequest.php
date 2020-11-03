@@ -104,7 +104,7 @@ class ApiRequest
             $response = $e->getResponse();
             $apiResponse->setStatusCode($response->getStatusCode());
         } catch ( ClientErrorResponseException $exceptionClient ) {
-
+            echo $exceptionClient->getResponse()->getBody();
         } catch ( Exception $ex) {
 
         }

@@ -4,7 +4,7 @@ class DibsEasyNotificationModuleFrontController extends ModuleFrontController
 {
     public function postProcess()
     {
-        sleep(2);
+        sleep(5);
 
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $easy_body = file_get_contents('php://input');

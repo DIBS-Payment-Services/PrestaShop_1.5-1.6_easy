@@ -24,11 +24,24 @@ class Summary
     private $reservedAmount;
 
     /**
+     * @var float
+     */
+    private $chargedAmount;
+
+    /**
      * @return float
      */
     public function getReservedAmount()
     {
         return $this->reservedAmount;
+    }
+
+    /**
+     * @return float
+     */
+    public function getChargedAmount()
+    {
+        return $this->chargedAmount;
     }
 
     /**
@@ -38,4 +51,13 @@ class Summary
     {
         $this->reservedAmount = $reservedAmount;
     }
+
+    /**
+     * @param float $chargedAmount
+     */
+    public function setChargedAmount($chargedAmount)
+    {
+        $this->chargedAmount = $chargedAmount;
+    }
+
 }

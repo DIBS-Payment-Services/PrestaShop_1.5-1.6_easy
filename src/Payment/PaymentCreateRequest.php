@@ -262,7 +262,7 @@ class PaymentCreateRequest
                 'webhooks' => array(
                     array('eventName' => "payment.checkout.completed",
                           'url' => $this->getNotificationUrl(),
-                          'authorization' => "389nd384rfh348rh3434r34t")),
+                          'authorization' =>  md5($this->getAmount() . $this->getCurrency() . $this->getReference()))),
             ),
         );
 

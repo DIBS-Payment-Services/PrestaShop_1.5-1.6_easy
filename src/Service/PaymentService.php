@@ -203,10 +203,15 @@ class PaymentService
 
         $paymentArray = $response->getFromBody('payment');
 
-        $summry = new Summary();
-        $summry->setReservedAmount(
+        $summary = new Summary();
+        $summary->setReservedAmount(
             isset($paymentArray['summary']['reservedAmount']) ?
                 $paymentArray['summary']['reservedAmount'] :
+                0
+        );
+        $summary->setChargedAmount(
+            isset($paymentArray['summary']['chargedAmount']) ?
+                $paymentArray['summary']['chargedAmount'] :
                 0
         );
 
@@ -411,7 +416,7 @@ class PaymentService
 
         $payment = new Payment();
         $payment->setPaymentId($paymentArray['paymentId']);
-        $payment->setSummary($summry);
+        $payment->setSummary($summary);
         $payment->setConsumer($consumer);
         $payment->setOrderDetail($orderDetail);
         $payment->setPaymentDetail($paymentDetail);
