@@ -8,7 +8,7 @@ parameters:
     js_checkout_test_url: 'https://test.checkout.dibspayment.eu/v1/checkout.js?v=1'
     js_checkout_prod_url: 'https://checkout.dibspayment.eu/v1/checkout.js?v=1'
 
-    supported_currencies: ['SEK', 'NOK', 'DKK']
+    supported_currencies: ['SEK', 'NOK', 'DKK', 'EUR', 'USD']
     supported_countries: ['SWE', 'NOR', 'DNK']
 
     module_settings:

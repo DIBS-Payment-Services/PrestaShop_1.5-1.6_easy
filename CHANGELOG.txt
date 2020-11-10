@@ -9,3 +9,7 @@ All notable changes to this project will be documented in this file.
 ### Added
 - handling of logged/non logged in customers,
   check for reserverd/charged amount
+
+## [1.2.1] - 2020-11-10
+- added support for additional languages,
+  added support for EUR currency
