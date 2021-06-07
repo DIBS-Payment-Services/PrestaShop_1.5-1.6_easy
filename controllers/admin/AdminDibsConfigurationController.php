@@ -42,7 +42,7 @@ class AdminDibsConfigurationController extends ModuleAdminController
     {
         $this->fields_options = array(
             'dibs_configuration' => array(
-                'title' => $this->l('DIBS Easy Checkout configuration'),
+                'title' => $this->l('NETS Easy Checkout configuration'),
                 'fields' => array(
                     'DIBS_MERCHANT_ID' => array(
                         'title' => $this->l('Merchant ID'),
@@ -107,6 +107,22 @@ class AdminDibsConfigurationController extends ModuleAdminController
                         'type' => 'bool',
                         'cast' => 'intval',
                         'class' => 'fixed-width-xxl',
+                    ),
+					'DIBS_AUTO_CAPTURE' => array(
+                        'title' => $this->l('Auto Capture'),
+                        'validation' => 'isBool',
+                        'type' => 'bool',
+                        'cast' => 'intval',
+                        'class' => 'fixed-width-xxl',
+                    ),
+					'DIBS_MTU_URL' => array(
+                        'title' => $this->l('Merchant Terms URL'),
+                        'desc' => $this->l('URL is required'),
+                        'validation' => 'isUrl',
+                        'type' => 'text',
+                        'class' => 'fixed-width-xxl',
+                        'required' => true,
+                        'size' => '30',
                     ),
                 ),
                 'submit' => array(

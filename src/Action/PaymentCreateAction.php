@@ -103,6 +103,8 @@ class PaymentCreateAction extends AbstractAction
         $createRequest->setUrl($this->linkAdapter->getModuleLink('dibseasy', 'checkout'));
         $createRequest->setNotificationUrl($this->linkAdapter->getModuleLink('dibseasy', 'notification'));
         $createRequest->setTermsUrl($this->configuration->get('DIBS_TAC_URL'));
+        $createRequest->setAutoCapture($this->configuration->get('DIBS_AUTO_CAPTURE'));
+        $createRequest->setMerchantTermsUrl($this->configuration->get('DIBS_MTU_URL'));
 
         $this->addShippingCountryRestrictions($createRequest);
 

@@ -37,7 +37,7 @@ parameters:
             - { name: 'Payment refunded in DIBS Easy', color: '#0094cf', paid: 0, invoice: 1, config: 'DIBS_REFUNDED_ORDER_STATE_ID'}
 
         tabs:
-            - { name: 'DIBS Easy Checkout', class_name: 'AdminDibsConfiguration', ParentClassName: ~ }
+            - { name: 'NETS Easy Checkout', class_name: 'AdminDibsConfiguration', ParentClassName: ~ }
 
         hooks:
             - 'moduleRoutes'

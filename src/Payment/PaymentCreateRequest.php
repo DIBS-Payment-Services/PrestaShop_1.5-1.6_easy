@@ -71,6 +71,16 @@ class PaymentCreateRequest
      * @var string Default consumer type
      */
     private $defaultConsumerType;
+	
+	/**
+     * @var string Auto Capture
+     */
+    private $autoCapture;
+	
+	/**
+     * @var string Merchant Terms URL
+     */
+    private $merchantTermsUrl;
 
     /**
      * @param array $supportedCountries
@@ -235,6 +245,42 @@ class PaymentCreateRequest
     {
         $this->defaultConsumerType = $defaultConsumerType;
     }
+	
+	/**
+     * @return int
+     */
+    public function getAutoCapture()
+    {
+		if($this->autoCapture){
+			return 'true';
+		}else{
+			return 'false';
+		}
+    }
+
+    /**
+     * @param int $autoCapture
+     */
+    public function setAutoCapture($autoCapture)
+    {
+        $this->autoCapture = $autoCapture;
+    }
+	
+	/**
+     * @return string
+     */
+    public function getMerchantTermsUrl()
+    {
+        return $this->merchantTermsUrl;
+    }
+
+    /**
+     * @param string $merchantTermsUrl
+     */
+    public function setMerchantTermsUrl($merchantTermsUrl)
+    {
+        $this->merchantTermsUrl = $merchantTermsUrl;
+    }
 
     /**
      * @return array
@@ -257,6 +303,8 @@ class PaymentCreateRequest
                     'supportedTypes' => $this->getSupportedConsumerTypes(),
                     'default' => $this->getDefaultConsumerType(),
                 ),
+				'autocapture' => $this->getAutoCapture(),
+				'merchanttermsurl' => $this->getMerchantTermsUrl(),
             ),
             'notifications' => array(
                 'webhooks' => array(
@@ -271,7 +319,7 @@ class PaymentCreateRequest
                 return array('countryCode' => $countryCode);
             }, $this->supportedCountries);
         }
-
+		
         return $orderArray;
     }
 }

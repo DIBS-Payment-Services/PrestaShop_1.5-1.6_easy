@@ -47,8 +47,8 @@ class DibsEasy extends PaymentModule
         $this->autoload();
         $this->compile();
 
-        $this->displayName = $this->l('DIBS Easy Checkout');
-        $this->description = $this->l('Accept payments via DIBS Easy Checkout.');
+        $this->displayName = $this->l('NETS Easy Checkout');
+        $this->description = $this->l('Accept payments via NETS Easy Checkout.');
     }
 
     /**
@@ -176,7 +176,7 @@ class DibsEasy extends PaymentModule
         ));
 
         if (!$this->isPS16()) {
-            $this->context->smarty->assign('dibs_img', $this->getPathUri().'views/img/dibs.png');
+            $this->context->smarty->assign('dibs_img', $this->getPathUri().'views/img/nets.png');
             return $this->context->smarty->fetch($this->getLocalPath().'views/templates/hook/payment15.tpl');
         }
 
@@ -274,7 +274,7 @@ class DibsEasy extends PaymentModule
         $success = $refundAction->partialRefundPayment($order, $params['productList'], $shippingCostRefund);
         if (!$success) {
             $this->context->controller->errors[] =
-                $this->l('Partial refund was successfully created, but failed to partially refund in DIBS Easy');
+                $this->l('Partial refund was successfully created, but failed to partially refund in NETS Easy');
         }
     }
 
@@ -369,7 +369,7 @@ class DibsEasy extends PaymentModule
         $saveAddress = true;
         $deliveryAddress = new Address($this->context->cart->id_address_delivery);
 
-        $deliveryAddress->alias = $this->l('DIBS EASY Address');
+        $deliveryAddress->alias = $this->l('NETS EASY Address');
         $deliveryAddress->address1 = $shippingAddress->getAddressLine1();
         $deliveryAddress->address2 = $shippingAddress->getAddressLine2();
         $deliveryAddress->postcode = $shippingAddress->getPostalCode();

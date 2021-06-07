@@ -16,8 +16,8 @@
 <div class="row">
     <div class="col-xs-12">
         <p class="payment_module">
-            <a href="{$dibs_payment_url|escape:'htmlall':'UTF-8'}" title="{l s='Pay by DIBS Easy Checkout' mod='dibseasy'}" class="dibs">
-                {l s='Pay by DIBS Easy Checkout' mod='dibseasy'}&nbsp;
+            <a href="{$dibs_payment_url|escape:'htmlall':'UTF-8'}" title="{l s='Pay by NETS Easy Checkout' mod='dibseasy'}" class="dibs">
+                {l s='Pay by NETS Easy Checkout' mod='dibseasy'}&nbsp;
                 <span>{l s='(order processing will be faster)' mod='dibseasy'}</span>
             </a>
         </p>

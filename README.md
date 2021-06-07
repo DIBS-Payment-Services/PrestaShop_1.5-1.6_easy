@@ -2,6 +2,12 @@
 
 This is PrestaShop 1.5/1.6 module for Easy Checkout, for more information see the following.
 
+### Setting up ###
+
+* Go to your Prestashop administration
+* Go to ```Modules and Services > NETS EASY CHECKOUT > CONFIGURATION```
+* Set Live/Test secret/checkout keys 
+
 If you have any issues please contact us [here](http://www.dibspayment.com/customer_support).
 
 ### Order confirmation email configuration ###
